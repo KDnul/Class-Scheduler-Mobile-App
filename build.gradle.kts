@@ -2,3 +2,7 @@
 plugins {
     alias(libs.plugins.androidApplication) apply false
 }
+
+ext {
+    val room_version = "2.6.1"
+}
