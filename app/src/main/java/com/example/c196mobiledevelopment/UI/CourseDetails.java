@@ -1,16 +1,43 @@
 package com.example.c196mobiledevelopment.UI;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.c196mobiledevelopment.R;
+import com.example.c196mobiledevelopment.database.Repository;
+import com.example.c196mobiledevelopment.entities.Course;
+
+import java.util.ArrayList;
 
 public class CourseDetails extends AppCompatActivity {
+    private Repository repository;
+    EditText courseTitle;
+    EditText courseStart;
+    EditText courseEnd;
+    EditText courseNote;
+    String title;
+    String startDate;
+    String endDate;
+    String note;
+    int courseId;
+    Course course;
+    Course currentCourse;
+    int termId;
+    String courseStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,5 +49,137 @@ public class CourseDetails extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        repository = new Repository(getApplication());
+
+        // Editing Details of a Course
+        courseTitle = findViewById(R.id.courseTitleEditText);
+        courseStart = findViewById(R.id.courseStartEditText);
+        courseEnd = findViewById(R.id.courseEndEditText);
+        courseNote = findViewById(R.id.courseNoteEditText);
+        courseStatus = getIntent().getStringExtra("status");
+        courseId = getIntent().getIntExtra("courseId", -1);
+        termId = getIntent().getIntExtra("termId", -1);
+
+        title = getIntent().getStringExtra("title");
+        startDate = getIntent().getStringExtra("startDate");
+        endDate = getIntent().getStringExtra("endDate");
+        note = getIntent().getStringExtra("notes");
+        courseTitle.setText(title);
+        courseStart.setText(startDate);
+        courseEnd.setText(endDate);
+        courseNote.setText(note);
+        // Course Status Spinner
+        Spinner spinner = findViewById(R.id.courseStatusSpinner);
+
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("Completed");
+        arrayList.add("Plan to Take");
+        arrayList.add("Dropped");
+        arrayList.add("In Progress");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, arrayList);
+        adapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+        spinner.setAdapter(adapter);
+        // Set Spinner to the status of the course
+        spinner.setSelection(getIndex(spinner, courseStatus));
+
+        // Get selected spinner item
+
+
+    }
+
+    private int getIndex(Spinner spinner, String courseStatus) {
+
+        int index = 0;
+
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).equals(courseStatus)) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_coursedetails, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            return true;
+        }
+        // Save details of the course and make it
+        if (item.getItemId() == R.id.saveCourse) {
+            if (termId == -1) {
+                Toast.makeText(CourseDetails.this, "Please make a term first", Toast.LENGTH_LONG).show();
+            } else {
+                Log.d("click", "Save course has been clicked");
+                Course course;
+                Spinner spinner = findViewById(R.id.courseStatusSpinner);
+                courseStatus = spinner.getSelectedItem().toString();
+                Log.d("courseTag", "Course id before if course id is -1 statement: " + courseId);
+                if (courseId == -1) {
+                    try {
+                        if (repository.getmAllCourses().isEmpty()) courseId = 1;
+                        else {
+                            Log.d("courseTag", "Course id is before repository: " + courseId);
+                            courseId = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseId() + 1;
+                            course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), "INSERT TEST", courseNote.getText().toString(), termId);
+                            repository.insertCourse(course);
+                            this.finish();
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    return true;
+                } else {
+//            Log.d("courseTag", "CourseId is after repository: " + courseId);
+//            Log.d("courseTag", "CourseStatus on UPDATE ELSE STATEMENT: " + courseStatus);
+//            Log.d("courseTag", "CourseTITLE is: " + courseTitle.getText().toString() + " after repository");
+//            Log.d("courseTag", "CourseSTART is: " + courseStart.getText().toString() + " after repository");
+//            Log.d("courseTag", "CourseEND is: " + courseEnd.getText().toString() + " after repository");
+//            Log.d("courseTag", "CourseNOTE is: " + courseNote.getText().toString() + " after repository");
+//            Log.d("courseTag", "CourseTERMID is: " + termId + " after repository");
+                    course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId);
+                    repository.updateCourse(course);
+                    this.finish();
+                }
+            }
+        }
+
+        // Share details of the course
+        if(item.getItemId() == R.id.shareNotes) {
+            if (termId == -1) {
+                Toast.makeText(CourseDetails.this, "Please make a term first", Toast.LENGTH_LONG).show();
+            } else {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, courseNote.getText().toString());
+                sendIntent.putExtra(Intent.EXTRA_TITLE, courseNote.getText().toString());
+                sendIntent.setType("text/plain");
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+                return true;
+
+            }
+        }
+
+
+        // Delete current Course
+        if (item.getItemId() == R.id.deleteCourse) {
+            try {
+                for (Course c : repository.getmAllCourses()) {
+                    if (c.getCourseId() == courseId) currentCourse = c;
+                }
+                repository.deleteCourse(currentCourse);
+                Toast.makeText(CourseDetails.this, currentCourse.getTitle() + " was deleted", Toast.LENGTH_LONG).show();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            this.finish();
+        }
+        return super.
+
+                onOptionsItemSelected(item);
     }
 }

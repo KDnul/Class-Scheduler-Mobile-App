@@ -26,11 +26,11 @@ public class Repository {
     private List<Assessment> mAllAssessments;
     private List<Instructor> mAllInstructors;
 
-    private static int NUMBER_OF_THREADS = 4;
-    static final ExecutorService databaseExecutor= Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    private static final int NUMBER_OF_THREADS = 4;
+    static final ExecutorService databaseExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public Repository(Application application) {
-        AppDatabase db=AppDatabase.getDatabase(application);
+        AppDatabase db = AppDatabase.getDatabase(application);
         mTermDAO = db.termDAO();
         mCourseDAO = db.courseDAO();
         mAssessmentDAO = db.assessmentDAO();
@@ -39,8 +39,9 @@ public class Repository {
 
     /**
      * Returns all Terms in the database
+     *
      * @return terms
-     * */
+     */
     public List<Term> getmAllTerms() throws InterruptedException {
         databaseExecutor.execute(() -> {
             mAllTerms = mTermDAO.getAllTerms();
@@ -100,16 +101,18 @@ public class Repository {
 
     /**
      * Return all Courses in the database
+     *
      * @return courses
-     * */
-    public List<Course> getmAllCourses() {
+     */
+    public List<Course> getmAllCourses() throws InterruptedException {
         databaseExecutor.execute(() -> {
             mAllCourses = mCourseDAO.getAllCourses();
         });
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return mAllCourses;
     }
@@ -147,21 +150,22 @@ public class Repository {
         }
     }
 
-    public void deleteAllCourseData() {
-        databaseExecutor.execute(() -> {
-            mCourseDAO.deleteAllCourseData();
-        });
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void deleteAllCourseData() {
+//        databaseExecutor.execute(() -> {
+//            mCourseDAO.deleteAllCourseData();
+//        });
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * Return all Assessments to the database
+     *
      * @return assessment
-     * */
+     */
 
     public List<Assessment> getAllAssessments() {
         databaseExecutor.execute(() -> {
@@ -221,8 +225,9 @@ public class Repository {
 
     /**
      * Return all Instructors to the database
+     *
      * @return instructor
-     * */
+     */
 
     public List<Instructor> getmAllInstructors() {
         databaseExecutor.execute(() -> {

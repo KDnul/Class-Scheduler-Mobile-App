@@ -1,5 +1,6 @@
 package com.example.c196mobiledevelopment.UI;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -22,22 +23,22 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
 
     class CourseViewHolder extends RecyclerView.ViewHolder {
         private final TextView courseItemView;
-        private final TextView courseItemView2;
         private final TextView courseDateView;
+        private final TextView courseStatusView;
 
-        private CourseViewHolder(View itemView) {
+        private CourseViewHolder(@NonNull View itemView) {
             super(itemView);
-            courseItemView = itemView.findViewById(R.id.textView3);
-            courseItemView2 = itemView.findViewById(R.id.textView4);
+            courseItemView = itemView.findViewById(R.id.courseNameView);
             courseDateView = itemView.findViewById(R.id.courseDateView);
+            courseStatusView = itemView.findViewById(R.id.courseStatusView);
             itemView.setOnClickListener(view -> {
                 int position = getAdapterPosition();
                 final Course current = mCourses.get(position);
                 Intent intent = new Intent(context, CourseDetails.class);
-                intent.putExtra("id", current.getCourseId());
+                intent.putExtra("courseId", current.getCourseId());
                 intent.putExtra("title", current.getTitle());
-                intent.putExtra("start", current.getStartDate());
-                intent.putExtra("end", current.getEndDate());
+                intent.putExtra("startDate", current.getStartDate());
+                intent.putExtra("endDate", current.getEndDate());
                 intent.putExtra("termId", current.getTermId());
                 intent.putExtra("status", current.getStatus());
                 intent.putExtra("notes", current.getNote());
@@ -51,22 +52,23 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         this.context = context;
     }
 
+    @NonNull
     @Override
-    public CourseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CourseAdapter.CourseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.course_list_item, parent, false);
         return new CourseViewHolder(itemView);
     }
-
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CourseAdapter.CourseViewHolder holder, int position) {
         if (mCourses != null) {
             Course current = mCourses.get(position);
             String title = current.getTitle();
-            int termId = current.getTermId();
             String date = current.getStartDate() + " to " + current.getEndDate();
+            String status = current.getStatus();
             holder.courseItemView.setText(title);
-            holder.courseItemView2.setText(Integer.toString(termId));
             holder.courseDateView.setText(date);
+            holder.courseStatusView.setText(status);
         } else {
             holder.courseItemView.setText("No Courses");
         }

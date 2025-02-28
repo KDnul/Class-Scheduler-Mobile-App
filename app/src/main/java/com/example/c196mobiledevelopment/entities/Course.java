@@ -11,11 +11,11 @@ public class Course {
     private String title;
     private String startDate;
     private String endDate;
-    private CourseStatus status;
+    private String status;
     private String note;
     private int termId;
 
-    public Course(int courseId, String title, String startDate, String endDate, CourseStatus status, String note, int termId) {
+    public Course(int courseId, String title, String startDate, String endDate, String status, String note, int termId) {
         this.courseId = courseId;
         this.title = title;
         this.startDate = startDate;
@@ -57,11 +57,11 @@ public class Course {
         this.endDate = endDate;
     }
 
-    public CourseStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(CourseStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

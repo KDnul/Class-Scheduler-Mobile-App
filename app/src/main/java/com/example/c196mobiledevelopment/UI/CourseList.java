@@ -9,11 +9,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.c196mobiledevelopment.R;
+import com.example.c196mobiledevelopment.database.Repository;
+import com.example.c196mobiledevelopment.entities.Course;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CourseList extends AppCompatActivity {
+    private Repository repository;
+    int termId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,5 +44,23 @@ public class CourseList extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Display courses in Term Details
+        termId = getIntent().getIntExtra("id", -1);
+        RecyclerView recyclerView = findViewById(R.id.courseListRecyclerView);
+        repository = new Repository(getApplication());
+        final CourseAdapter courseAdapter = new CourseAdapter(this);
+        recyclerView.setAdapter(courseAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        List<Course> filteredCourses = new ArrayList<>();
+        try {
+            for (Course c : repository.getmAllCourses()) {
+                if (c.getTermId() == termId) filteredCourses.add(c);
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        courseAdapter.setCourses(filteredCourses);
+
     }
 }
