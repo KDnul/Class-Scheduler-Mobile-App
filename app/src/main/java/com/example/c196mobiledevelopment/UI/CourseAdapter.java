@@ -26,7 +26,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         private final TextView courseDateView;
         private final TextView courseStatusView;
 
-        private CourseViewHolder(@NonNull View itemView) {
+        private CourseViewHolder(View itemView) {
             super(itemView);
             courseItemView = itemView.findViewById(R.id.courseNameView);
             courseDateView = itemView.findViewById(R.id.courseDateView);
@@ -42,6 +42,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
                 intent.putExtra("termId", current.getTermId());
                 intent.putExtra("status", current.getStatus());
                 intent.putExtra("notes", current.getNote());
+                intent.putExtra("instructorId", current.getInstructorId());
                 context.startActivity(intent);
             });
         }
@@ -66,6 +67,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
             String title = current.getTitle();
             String date = current.getStartDate() + " to " + current.getEndDate();
             String status = current.getStatus();
+            int termId = current.getTermId();
             holder.courseItemView.setText(title);
             holder.courseDateView.setText(date);
             holder.courseStatusView.setText(status);

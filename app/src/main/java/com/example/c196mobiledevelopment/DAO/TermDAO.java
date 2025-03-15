@@ -26,7 +26,4 @@ public interface TermDAO {
 
     @Query("DELETE FROM terms")
     void deleteAllTermData();
-
-    @Query("SELECT COUNT(*) FROM terms")
-    int countTerms();
 }

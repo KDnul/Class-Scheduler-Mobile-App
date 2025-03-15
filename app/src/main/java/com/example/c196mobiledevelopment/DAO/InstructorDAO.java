@@ -26,9 +26,6 @@ public interface InstructorDAO {
     @Query("SELECT * FROM instructors")
     List<Instructor> getAllInstructors();
 
-    @Query("UPDATE instructors SET courseId = 0 WHERE courseId =:id")
-    void resetInstructorCourse(int id);
-
     @Query("DELETE FROM instructors")
     void deleteAllInstructorData();
 

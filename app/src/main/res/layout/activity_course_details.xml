@@ -12,7 +12,6 @@
         android:layout_width="409dp"
         android:layout_height="140dp"
         android:background="#03A9F4"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -28,10 +27,10 @@
 
                 <TextView
                     android:id="@+id/courseTitleTextView"
-                    android:layout_width="55dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="75dp"
+                    android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:text="Course TItle: " />
+                    android:text="Course:" />
 
                 <EditText
                     android:id="@+id/courseTitleEditText"
@@ -51,7 +50,7 @@
                 <TextView
                     android:id="@+id/courseStartTextView"
                     android:layout_width="55dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_weight="1"
                     android:text="Start Date:" />
 
@@ -73,7 +72,7 @@
                 <TextView
                     android:id="@+id/courseEndTextView"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_weight="1"
                     android:text="End Date" />
 
@@ -91,8 +90,8 @@
 
     <EditText
         android:id="@+id/courseNoteEditText"
-        android:layout_width="404dp"
-        android:layout_height="208dp"
+        android:layout_width="405dp"
+        android:layout_height="143dp"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:gravity="start|top"
@@ -104,8 +103,8 @@
 
     <TextView
         android:id="@+id/textView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="59dp"
+        android:layout_height="26dp"
         android:layout_marginTop="8dp"
         android:text="Notes"
         app:layout_constraintEnd_toEndOf="parent"
@@ -113,23 +112,66 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
+    <Spinner
+        android:id="@+id/courseInstructorSpinner"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
-        android:text="Status"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="120dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/courseNoteEditText" />
+
+    <Button
+        android:id="@+id/addInstructorBtn"
+        android:layout_width="106dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="8dp"
+        android:text="Add Instructor"
+        android:textSize="8sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/courseInstructorSpinner"
         app:layout_constraintTop_toBottomOf="@+id/courseNoteEditText" />
 
     <Spinner
         android:id="@+id/courseStatusSpinner"
-        android:layout_width="125dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="120dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/courseInstructorSpinner" />
+
+    <TextView
+        android:id="@+id/cStatusTextView"
+        android:layout_width="59dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="20dp"
+        android:text="Status"
+        app:layout_constraintEnd_toStartOf="@+id/courseStatusSpinner"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cInstructorTextView" />
+
+    <TextView
+        android:id="@+id/cInstructorTextView"
+        android:layout_width="65dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="16dp"
+        android:text="Instructor:"
+        app:layout_constraintEnd_toStartOf="@+id/courseInstructorSpinner"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/courseNoteEditText" />
+
+    <LinearLayout
+        android:layout_width="409dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        tools:layout_editor_absoluteY="419dp"></LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

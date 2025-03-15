@@ -10,14 +10,12 @@ public class Instructor {
     private String name;
     private String email;
     private String phone;
-    private int courseId;
 
-    public Instructor(int instructorId, String name, String email, String phone, int courseId) {
+    public Instructor(int instructorId, String name, String email, String phone) {
         this.instructorId = instructorId;
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.courseId = courseId;
     }
 
     public int getInstructorId() {
@@ -50,14 +48,6 @@ public class Instructor {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public int getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
     }
 }
 

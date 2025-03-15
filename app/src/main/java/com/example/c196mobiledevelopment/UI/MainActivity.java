@@ -25,10 +25,29 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener(v -> {
+//        Instructor instructor = new Instructor(1, "InstructorTest", "instructoremail@email.com", "instructorPHONE");
+//        Repository repository = new Repository(getApplication());
+//        repository.insertInstructor(instructor);
+//        Instructor instructor = new Instructor(2, "Matthew", "matthewmaths@email.com", "matthewPhone");
+//        Repository repository = new Repository(getApplication());
+//        repository.insertInstructor(instructor);
+
+        Button tListButton = findViewById(R.id.termListBtn);
+        tListButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, TermList.class);
             intent.putExtra("test", "Information Sent");
+            startActivity(intent);
+        });
+
+        Button cListButton = findViewById(R.id.courseListBtn);
+        cListButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CourseList.class);
+            startActivity(intent);
+        });
+
+        Button aListButton = findViewById(R.id.assessmentListBtn);
+        aListButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AssessmentList.class);
             startActivity(intent);
         });
     }

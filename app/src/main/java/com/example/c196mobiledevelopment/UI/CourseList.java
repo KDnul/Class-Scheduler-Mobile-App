@@ -45,22 +45,40 @@ public class CourseList extends AppCompatActivity {
             }
         });
 
-        // Display courses in Term Details
-        termId = getIntent().getIntExtra("id", -1);
+        // Display All courses
         RecyclerView recyclerView = findViewById(R.id.courseListRecyclerView);
         repository = new Repository(getApplication());
         final CourseAdapter courseAdapter = new CourseAdapter(this);
         recyclerView.setAdapter(courseAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        List<Course> filteredCourses = new ArrayList<>();
+        List<Course> courseList;
         try {
-            for (Course c : repository.getmAllCourses()) {
-                if (c.getTermId() == termId) filteredCourses.add(c);
-            }
+            courseList = new ArrayList<>(repository.getmAllCourses());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        courseAdapter.setCourses(filteredCourses);
+        courseAdapter.setCourses(courseList);
 
+    }
+
+    protected void onResume() {
+        try {
+            super.onResume();
+            // Display All courses
+            RecyclerView recyclerView = findViewById(R.id.courseListRecyclerView);
+            repository = new Repository(getApplication());
+            final CourseAdapter courseAdapter = new CourseAdapter(this);
+            recyclerView.setAdapter(courseAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            List<Course> courseList;
+            try {
+                courseList = new ArrayList<>(repository.getmAllCourses());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            courseAdapter.setCourses(courseList);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }

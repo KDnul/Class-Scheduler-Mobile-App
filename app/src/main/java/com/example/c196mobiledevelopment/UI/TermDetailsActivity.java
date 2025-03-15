@@ -53,6 +53,7 @@ public class TermDetailsActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.courseAddFAB);
         fab.setOnClickListener(view -> {
             Intent intent = new Intent(TermDetailsActivity.this, CourseDetails.class);
+            intent.putExtra("termId", termId);
             startActivity(intent);
         });
 
@@ -97,7 +98,11 @@ public class TermDetailsActivity extends AppCompatActivity {
             Term term;
             if (termId == -1) {
                 try {
-                    if (repository.getmAllTerms().isEmpty()) termId = 1;
+                    if (repository.getmAllTerms().isEmpty()) {
+                        termId = 1;
+                        term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
+                        repository.insertTerm(term);
+                    }
                     else {
                         termId = repository.getmAllTerms().get(repository.getmAllTerms().size() - 1).getTermId() + 1;
                         term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
@@ -116,7 +121,7 @@ public class TermDetailsActivity extends AppCompatActivity {
             repository.updateTerm(term);
         }
 
-        // Delete curent Term
+        // Delete current Term
         if (item.getItemId() == R.id.termDelete) {
             try {
                 for (Term t : repository.getmAllTerms()) {
