@@ -102,6 +102,7 @@ public class TermDetailsActivity extends AppCompatActivity {
                         termId = 1;
                         term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
                         repository.insertTerm(term);
+                        this.finish();
                     }
                     else {
                         termId = repository.getmAllTerms().get(repository.getmAllTerms().size() - 1).getTermId() + 1;

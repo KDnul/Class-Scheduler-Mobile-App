@@ -67,7 +67,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
             String title = current.getTitle();
             String date = current.getStartDate() + " to " + current.getEndDate();
             String status = current.getStatus();
-            int termId = current.getTermId();
             holder.courseItemView.setText(title);
             holder.courseDateView.setText(date);
             holder.courseStatusView.setText(status);

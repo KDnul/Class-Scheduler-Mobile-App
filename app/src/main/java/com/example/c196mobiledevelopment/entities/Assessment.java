@@ -11,10 +11,10 @@ public class Assessment {
     private String title;
     private String startDate;
     private String endDate;
-    private AssessmentType type;
+    private String type;
     private int courseId;
 
-    public Assessment(int assessmentId, String title, String startDate, String endDate, AssessmentType type, int courseId) {
+    public Assessment(int assessmentId, String title, String startDate, String endDate, String type, int courseId) {
         this.assessmentId = assessmentId;
         this.title = title;
         this.startDate = startDate;
@@ -55,11 +55,11 @@ public class Assessment {
         this.endDate = endDate;
     }
 
-    public AssessmentType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(AssessmentType type) {
+    public void setType(String type) {
         this.type = type;
     }
 

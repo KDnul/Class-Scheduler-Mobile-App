@@ -167,7 +167,7 @@ public class Repository {
      * @return assessment
      */
 
-    public List<Assessment> getAllAssessments() {
+    public List<Assessment> getmAllAssessments() {
         databaseExecutor.execute(() -> {
             mAllAssessments = mAssessmentDAO.getAllAssessments();
         });

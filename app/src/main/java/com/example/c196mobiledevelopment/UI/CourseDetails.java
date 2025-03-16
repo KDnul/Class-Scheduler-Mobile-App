@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.c196mobiledevelopment.R;
 import com.example.c196mobiledevelopment.database.Repository;
@@ -27,6 +29,7 @@ import com.example.c196mobiledevelopment.entities.Course;
 import com.example.c196mobiledevelopment.entities.Instructor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CourseDetails extends AppCompatActivity {
     private Repository repository;
@@ -45,7 +48,6 @@ public class CourseDetails extends AppCompatActivity {
     int termId;
     int instructorId;
     String courseStatus;
-    Button addInstructor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +80,6 @@ public class CourseDetails extends AppCompatActivity {
         courseEnd.setText(endDate);
         courseNote.setText(note);
 
-        // Instructor Add Spinner
-        Button addInstructorBtn = (Button) findViewById(R.id.addInstructorBtn);
-        addInstructorBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(CourseDetails.this, AddInstructorDetails.class);
-            startActivity(intent);
-        });
-
         // Course Instructor Spinner
         ArrayList<Instructor> instructorArrayList = new ArrayList<>();
         instructorArrayList.addAll(repository.getmAllInstructors());
@@ -101,6 +96,17 @@ public class CourseDetails extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 instructorId = instructorArrayList.get(position).getInstructorId();
+                Instructor currentInstructor = instructorArrayList.get(position);
+                // Instructor Add Spinner
+                Button addInstructorBtn = (Button) findViewById(R.id.addInstructorBtn);
+                addInstructorBtn.setOnClickListener(v -> {
+                    Intent intent = new Intent(CourseDetails.this, InstructorDetails.class);
+                    intent.putExtra("instructorId", currentInstructor.getInstructorId());
+                    intent.putExtra("name",currentInstructor.getName());
+                    intent.putExtra("email", currentInstructor.getEmail());
+                    intent.putExtra("phoneNumber", currentInstructor.getPhone());
+                    startActivity(intent);
+                });
                 Log.d("Instructor", "INSTRUCTOR ID IS: " + instructorId);
             }
 
@@ -118,7 +124,6 @@ public class CourseDetails extends AppCompatActivity {
 
         // Course Status Spinner
         Spinner satSpinner = findViewById(R.id.courseStatusSpinner);
-
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("Completed");
         arrayList.add("Plan to Take");
@@ -130,6 +135,18 @@ public class CourseDetails extends AppCompatActivity {
         // Set Spinner to the status of the course
         satSpinner.setSelection(getIndex(satSpinner, courseStatus));
 
+
+        // Assessment Lists in Course Details
+        RecyclerView recyclerView = findViewById(R.id.courseDetailAssessmentReyclerView);
+        repository = new Repository(getApplication());
+        final AssessmentAdapter assessmentAdapter = new AssessmentAdapter(this);
+        recyclerView.setAdapter(assessmentAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        List<Assessment> filteredAssessments = new ArrayList<>();
+        for (Assessment a : repository.getmAllAssessments()) {
+            if (a.getCourseId() == courseId) filteredAssessments.add(a);
+        }
+        assessmentAdapter.setAssessments(filteredAssessments);
 
     }
 
@@ -156,7 +173,6 @@ public class CourseDetails extends AppCompatActivity {
         }
         // Save details of the course and make it
         if (item.getItemId() == R.id.saveCourse) {
-//            repository.getTermId(termId);
             if (termId == -1) {
                 Toast.makeText(CourseDetails.this, "Please make a term first", Toast.LENGTH_LONG).show();
             } else {
@@ -168,11 +184,17 @@ public class CourseDetails extends AppCompatActivity {
                 Log.d("courseTag", "Course id before if course id is -1 statement: " + courseId);
                 if (courseId == -1) {
                     try {
-                        if (repository.getmAllCourses().isEmpty()) courseId = 1;
+                        if (repository.getmAllCourses().isEmpty()){
+                            courseId = 1;
+                            course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
+                            repository.insertCourse(course);
+                            this.finish();
+                        }
+
                         else {
                             Log.d("courseTag", "Course id is before repository: " + courseId);
                             courseId = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseId() + 1;
-                            course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), "INSERT TEST", courseNote.getText().toString(), termId, instructorId);
+                            course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
                             repository.insertCourse(course);
                             this.finish();
                         }
@@ -220,7 +242,7 @@ public class CourseDetails extends AppCompatActivity {
                     if (c.getCourseId() == courseId) currentCourse = c;
                 }
                 numAssessments = 0;
-                for (Assessment a : repository.getAllAssessments()) {
+                for (Assessment a : repository.getmAllAssessments()) {
                     if (a.getCourseId() == courseId) ++numAssessments;
                 }
                 if (numAssessments == 0) {
@@ -235,5 +257,62 @@ public class CourseDetails extends AppCompatActivity {
             this.finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Course Instructor Spinner
+        ArrayList<Instructor> instructorArrayList = new ArrayList<>();
+        instructorArrayList.addAll(repository.getmAllInstructors());
+
+        ArrayList<String> instructorNameList = new ArrayList<>();
+        for(Instructor instructor:instructorArrayList) {
+            instructorNameList.add(instructor.getName());
+        }
+        ArrayAdapter<String> instructorAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,instructorNameList);
+        Spinner iSpinner = findViewById(R.id.courseInstructorSpinner);
+        iSpinner.setAdapter(instructorAdapter);
+        iSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                instructorId = instructorArrayList.get(position).getInstructorId();
+                Instructor currentInstructor = instructorArrayList.get(position);
+                // Instructor Add Spinner
+                Button addInstructorBtn = (Button) findViewById(R.id.addInstructorBtn);
+                addInstructorBtn.setOnClickListener(v -> {
+                    Intent intent = new Intent(CourseDetails.this, InstructorDetails.class);
+                    intent.putExtra("instructorId", currentInstructor.getInstructorId());
+                    intent.putExtra("name",currentInstructor.getName());
+                    intent.putExtra("email", currentInstructor.getEmail());
+                    intent.putExtra("phoneNumber", currentInstructor.getPhone());
+                    startActivity(intent);
+                });
+                Log.d("Instructor", "INSTRUCTOR ID IS: " + instructorId);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        for(Instructor instructor:instructorArrayList) {
+            if(instructorId == instructor.getInstructorId()) {
+                iSpinner.setSelection(getIndex(iSpinner, instructor.getName()));
+            }
+        }
+
+        // Assessment Lists in Course Details
+        RecyclerView recyclerView = findViewById(R.id.courseDetailAssessmentReyclerView);
+        repository = new Repository(getApplication());
+        final AssessmentAdapter assessmentAdapter = new AssessmentAdapter(this);
+        recyclerView.setAdapter(assessmentAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        List<Assessment> filteredAssessments = new ArrayList<>();
+        for (Assessment a : repository.getmAllAssessments()) {
+            if (a.getCourseId() == courseId) filteredAssessments.add(a);
+        }
+        assessmentAdapter.setAssessments(filteredAssessments);
     }
 }

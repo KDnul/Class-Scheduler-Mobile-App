@@ -25,11 +25,11 @@ public interface AssessmentDAO {
     @Query("SELECT * FROM assessments")
     List<Assessment> getAllAssessments();
 
-    @Query("UPDATE assessments SET courseID = 0 WHERE courseID =:id")
+    @Query("UPDATE assessments SET courseId = 0 WHERE courseId =:id")
     void resetAssessmentCourse(int id);
 
-    @Query("UPDATE assessments SET courseID = 0 WHERE courseID =:courseID AND assessmentID =:assessmentID")
-    void resetAssessmentCourseSpecific(int courseID, int assessmentID);
+    @Query("UPDATE assessments SET courseId = 0 WHERE courseId =:courseId AND assessmentId =:assessmentId")
+    void resetAssessmentCourseSpecific(int courseId, int assessmentId);
 
     @Query("DELETE FROM assessments")
     void deleteAllAssessmentData();

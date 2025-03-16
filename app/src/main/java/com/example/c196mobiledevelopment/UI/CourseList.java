@@ -71,11 +71,7 @@ public class CourseList extends AppCompatActivity {
             recyclerView.setAdapter(courseAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             List<Course> courseList;
-            try {
-                courseList = new ArrayList<>(repository.getmAllCourses());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            courseList = new ArrayList<>(repository.getmAllCourses());
             courseAdapter.setCourses(courseList);
         } catch (Exception e) {
             System.out.println(e);

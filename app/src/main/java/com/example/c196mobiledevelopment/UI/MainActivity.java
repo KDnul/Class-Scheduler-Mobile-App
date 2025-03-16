@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.c196mobiledevelopment.R;
+import com.example.c196mobiledevelopment.database.Repository;
+import com.example.c196mobiledevelopment.entities.Assessment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,11 +28,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //        Instructor instructor = new Instructor(1, "InstructorTest", "instructoremail@email.com", "instructorPHONE");
-//        Repository repository = new Repository(getApplication());
+        Repository repository = new Repository(getApplication());
 //        repository.insertInstructor(instructor);
 //        Instructor instructor = new Instructor(2, "Matthew", "matthewmaths@email.com", "matthewPhone");
 //        Repository repository = new Repository(getApplication());
 //        repository.insertInstructor(instructor);
+        Assessment assessment1 = new Assessment(1,"Assessment 1", "1/1/2024", "6/1/2024", "Objective Assessment", 1);
+        Assessment assessment2 = new Assessment(2,"Assessment 2", "1/1/2024", "6/1/2024", "Performance Assessment", 1);
+        repository.updateAssessment(assessment1);
+        repository.updateAssessment(assessment2);
+
 
         Button tListButton = findViewById(R.id.termListBtn);
         tListButton.setOnClickListener(v -> {
