@@ -15,7 +15,7 @@ import com.example.c196mobiledevelopment.entities.Course;
 import com.example.c196mobiledevelopment.entities.Instructor;
 import com.example.c196mobiledevelopment.entities.Term;
 
-@Database(entities = {Term.class, Course.class, Assessment.class, Instructor.class}, version = 4, exportSchema = false)
+@Database(entities = {Term.class, Course.class, Assessment.class, Instructor.class}, version = 5, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TermDAO termDAO();
     public abstract AssessmentDAO assessmentDAO();

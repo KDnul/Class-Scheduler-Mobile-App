@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -27,12 +28,16 @@ import com.example.c196mobiledevelopment.database.Repository;
 import com.example.c196mobiledevelopment.entities.Assessment;
 import com.example.c196mobiledevelopment.entities.Course;
 import com.example.c196mobiledevelopment.entities.Instructor;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDetails extends AppCompatActivity {
     private Repository repository;
+
+    TextView instructorPhone;
+    TextView instructorEmail;
     EditText courseTitle;
     EditText courseStart;
     EditText courseEnd;
@@ -43,7 +48,6 @@ public class CourseDetails extends AppCompatActivity {
     String note;
     int courseId;
     int numAssessments;
-    Course course;
     Course currentCourse;
     int termId;
     int instructorId;
@@ -66,6 +70,8 @@ public class CourseDetails extends AppCompatActivity {
         courseStart = findViewById(R.id.courseStartEditText);
         courseEnd = findViewById(R.id.courseEndEditText);
         courseNote = findViewById(R.id.courseNoteEditText);
+        instructorPhone = findViewById(R.id.instructorPhoneTextView);
+        instructorEmail = findViewById(R.id.instructorEmailTextView);
         courseStatus = getIntent().getStringExtra("status");
         courseId = getIntent().getIntExtra("courseId", -1);
         termId = getIntent().getIntExtra("termId", -1);
@@ -93,13 +99,15 @@ public class CourseDetails extends AppCompatActivity {
         iSpinner.setAdapter(instructorAdapter);
         iSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
+
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 instructorId = instructorArrayList.get(position).getInstructorId();
                 Instructor currentInstructor = instructorArrayList.get(position);
-                // Instructor Add Spinner
-                Button addInstructorBtn = (Button) findViewById(R.id.addInstructorBtn);
-                addInstructorBtn.setOnClickListener(v -> {
+
+                // Instructor Edit Spinner
+                Button editInstructorBtn = (Button) findViewById(R.id.editInstructorBtn);
+                editInstructorBtn.setOnClickListener(v -> {
                     Intent intent = new Intent(CourseDetails.this, InstructorDetails.class);
                     intent.putExtra("instructorId", currentInstructor.getInstructorId());
                     intent.putExtra("name",currentInstructor.getName());
@@ -107,7 +115,6 @@ public class CourseDetails extends AppCompatActivity {
                     intent.putExtra("phoneNumber", currentInstructor.getPhone());
                     startActivity(intent);
                 });
-                Log.d("Instructor", "INSTRUCTOR ID IS: " + instructorId);
             }
 
             @Override
@@ -115,6 +122,14 @@ public class CourseDetails extends AppCompatActivity {
 
             }
         });
+
+        // Instructor Edit Spinner
+        Button addInstructorBtn = (Button) findViewById(R.id.addInstructorBtn);
+        addInstructorBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(CourseDetails.this, InstructorDetails.class);
+            startActivity(intent);
+        });
+
         for(Instructor instructor:instructorArrayList) {
             if(instructorId == instructor.getInstructorId()) {
                 iSpinner.setSelection(getIndex(iSpinner, instructor.getName()));
@@ -148,6 +163,14 @@ public class CourseDetails extends AppCompatActivity {
         }
         assessmentAdapter.setAssessments(filteredAssessments);
 
+        // Adding an Assessment
+        FloatingActionButton fab = findViewById(R.id.addAssessmentFAB);
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(CourseDetails.this, AssessmentDetails.class);
+            intent.putExtra("courseId", courseId);
+            startActivity(intent);
+        });
+
     }
 
     private int getIndex(Spinner spinner, String courseStatus) {
@@ -169,6 +192,7 @@ public class CourseDetails extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            this.finish();
             return true;
         }
         // Save details of the course and make it
@@ -180,14 +204,13 @@ public class CourseDetails extends AppCompatActivity {
                 Course course;
                 Spinner cSpinner = findViewById(R.id.courseStatusSpinner);
                 courseStatus = cSpinner.getSelectedItem().toString();
-//                Spinner iSpinner = findViewById(R.id.courseInstructorSpinner);
-                Log.d("courseTag", "Course id before if course id is -1 statement: " + courseId);
                 if (courseId == -1) {
                     try {
                         if (repository.getmAllCourses().isEmpty()){
                             courseId = 1;
                             course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
                             repository.insertCourse(course);
+                            Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
                             this.finish();
                         }
 
@@ -196,6 +219,7 @@ public class CourseDetails extends AppCompatActivity {
                             courseId = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseId() + 1;
                             course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
                             repository.insertCourse(course);
+                            Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
                             this.finish();
                         }
                     } catch (Exception e) {
@@ -203,15 +227,9 @@ public class CourseDetails extends AppCompatActivity {
                     }
                     return true;
                 } else {
-//            Log.d("courseTag", "CourseId is after repository: " + courseId);
-//            Log.d("courseTag", "CourseStatus on UPDATE ELSE STATEMENT: " + courseStatus);
-//            Log.d("courseTag", "CourseTITLE is: " + courseTitle.getText().toString() + " after repository");
-//            Log.d("courseTag", "CourseSTART is: " + courseStart.getText().toString() + " after repository");
-//            Log.d("courseTag", "CourseEND is: " + courseEnd.getText().toString() + " after repository");
-//            Log.d("courseTag", "CourseNOTE is: " + courseNote.getText().toString() + " after repository");
-//            Log.d("courseTag", "CourseTERMID is: " + termId + " after repository");
                     course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
                     repository.updateCourse(course);
+                    Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was deleted from Course List", Toast.LENGTH_LONG).show();
                     this.finish();
                 }
             }
@@ -279,8 +297,11 @@ public class CourseDetails extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 instructorId = instructorArrayList.get(position).getInstructorId();
                 Instructor currentInstructor = instructorArrayList.get(position);
+
+                instructorPhone.setText(currentInstructor.getPhone());
+                instructorEmail.setText(currentInstructor.getEmail());
                 // Instructor Add Spinner
-                Button addInstructorBtn = (Button) findViewById(R.id.addInstructorBtn);
+                Button addInstructorBtn = (Button) findViewById(R.id.editInstructorBtn);
                 addInstructorBtn.setOnClickListener(v -> {
                     Intent intent = new Intent(CourseDetails.this, InstructorDetails.class);
                     intent.putExtra("instructorId", currentInstructor.getInstructorId());

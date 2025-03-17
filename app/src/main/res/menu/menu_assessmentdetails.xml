@@ -6,5 +6,5 @@
         android:title="Save" />
     <item
         android:id="@+id/assessmentDelete"
-        android:title="Item" />
+        android:title="Delete" />
 </menu>

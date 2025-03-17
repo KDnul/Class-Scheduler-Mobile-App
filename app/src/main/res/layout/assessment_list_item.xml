@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="8dp"
@@ -20,23 +20,26 @@
 
         <TextView
             android:id="@+id/assessmentTitleView"
-            android:layout_width="131dp"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Name" />
+            android:gravity="right"
+            android:text="Assessment 1"
+            android:textAlignment="textStart" />
 
         <TextView
             android:id="@+id/assessmentDateView"
-            android:layout_width="197dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Date" />
+            android:text="01/01/25 to 01/01/25"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/assessmentTypeView"
-            android:layout_width="129dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Type" />
+            android:text="Objective Assessment" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

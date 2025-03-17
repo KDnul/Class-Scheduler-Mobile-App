@@ -24,11 +24,10 @@ import java.util.ArrayList;
 public class AssessmentDetails extends AppCompatActivity {
     private Repository repository;
     EditText assessmentTitle;
-    EditText assessmentStart;
-    EditText assessmentEnd;
+    EditText assessmentDate;
     Spinner spinner;
     String title;
-    String startDate;
+    String date;
     String endDate;
     String assessmentType;
     int assessmentId;
@@ -49,18 +48,16 @@ public class AssessmentDetails extends AppCompatActivity {
 
         // Edit Details of an Assessment
         assessmentTitle = findViewById(R.id.assessmentTitleEditText);
-        assessmentStart = findViewById(R.id.assessmentStartEditText);
-        assessmentEnd   = findViewById(R.id.assessmentEndEditText);
+        assessmentDate = findViewById(R.id.assessmentDateEditText);
         assessmentType = getIntent().getStringExtra("type");
         assessmentId = getIntent().getIntExtra("assessmentId", -1);
         courseId = getIntent().getIntExtra("courseId", -1);
 
         title = getIntent().getStringExtra("title");
-        startDate = getIntent().getStringExtra("startDate");
+        date = getIntent().getStringExtra("date");
         endDate = getIntent().getStringExtra("endDate");
         assessmentTitle.setText(title);
-        assessmentStart.setText(startDate);
-        assessmentEnd.setText(endDate);
+        assessmentDate.setText(date);
 
         // Assessment Type Spinner
         spinner = findViewById(R.id.assessmentTypeSpinner);
@@ -94,6 +91,7 @@ public class AssessmentDetails extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            this.finish();
             return true;
         }
         // Save details of the assessment and make it
@@ -108,13 +106,14 @@ public class AssessmentDetails extends AppCompatActivity {
                     try {
                         if (repository.getmAllAssessments().isEmpty()) {
                             assessmentId = 1;
-                            assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentStart.getText().toString(), assessmentEnd.getText().toString(), assessmentType,courseId);
+                            assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentDate.getText().toString(), assessmentType,courseId);
                             repository.insertAssessment(assessment);
+                            Toast.makeText(AssessmentDetails.this, assessmentTitle.getText().toString() + " was added to Assessment List", Toast.LENGTH_LONG).show();
                             this.finish();
                         } else {
                             assessmentId = repository.getmAllAssessments().get(repository.getmAllAssessments().size() - 1).getAssessmentId() + 1;
-                            assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentStart.getText().toString(), assessmentEnd.getText().toString(), assessmentType,courseId);
-                            repository.insertAssessment(assessment);
+                            assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentDate.getText().toString(), assessmentType,courseId);                            repository.insertAssessment(assessment);
+                            Toast.makeText(AssessmentDetails.this, assessmentTitle.getText().toString() + " was added to Assessment List", Toast.LENGTH_LONG).show();
                             this.finish();
                         }
                     } catch (Exception e) {
@@ -122,8 +121,19 @@ public class AssessmentDetails extends AppCompatActivity {
                     }
                     return true;
                 } else {
-                    assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentStart.getText().toString(), assessmentEnd.getText().toString(), assessmentType,courseId);
+                    assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentDate.getText().toString(), assessmentType,courseId);
                     repository.updateAssessment(assessment);
+                    Toast.makeText(AssessmentDetails.this, assessmentTitle.getText().toString() + " was updated", Toast.LENGTH_LONG).show();
+                    this.finish();
+                }
+            }
+        }
+
+        if(item.getItemId() == R.id.assessmentDelete) {
+            for (Assessment a : repository.getmAllAssessments()) {
+                if(a.getAssessmentId() == assessmentId) {
+                    repository.deleteAssessment(a);
+                    Toast.makeText(AssessmentDetails.this, a.getTitle() + " was deleted", Toast.LENGTH_LONG).show();
                     this.finish();
                 }
             }

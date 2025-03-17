@@ -1,10 +1,18 @@
 package com.example.c196mobiledevelopment.UI;
 
+import android.app.AlarmManager;
+import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -22,14 +30,20 @@ import com.example.c196mobiledevelopment.entities.Course;
 import com.example.c196mobiledevelopment.entities.Term;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class TermDetailsActivity extends AppCompatActivity {
     private Repository repository;
     EditText editTitle;
-    EditText editStartDate;
-    EditText editEndDate;
+    TextView editStartDate;
+    TextView editEndDate;
     String title;
     String startDate;
     String endDate;
@@ -37,6 +51,9 @@ public class TermDetailsActivity extends AppCompatActivity {
     int numCourses;
     Term term;
     Term currentTerm;
+    DatePickerDialog.OnDateSetListener startDatePicker;
+    DatePickerDialog.OnDateSetListener endDatePicker;
+    final Calendar myCalendarStart = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +87,63 @@ public class TermDetailsActivity extends AppCompatActivity {
         editStartDate.setText(startDate);
         editEndDate.setText(endDate);
 
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        startDatePicker = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                myCalendarStart.set(Calendar.YEAR, year);
+                myCalendarStart.set(Calendar.MONTH, monthOfYear);
+                myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelStart();
+            }
+        };
+        endDatePicker = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                myCalendarStart.set(Calendar.YEAR, year);
+                myCalendarStart.set(Calendar.MONTH, monthOfYear);
+                myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelEnd();
+            }
+        };
+
+        editStartDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("date", "Start date has been clicked");
+                // TODO Auto-Generated method stub
+                Date date;
+                // get value from other screen, but i'm going to hardcode it
+                String info = editStartDate.getText().toString();
+                if(info.isEmpty()) info="12/01/24";
+                try {
+                    myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(TermDetailsActivity.this, startDatePicker, myCalendarStart.get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        editEndDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("date", "Start date has been clicked");
+                // TODO Auto-Generated method stub
+                Date date;
+                // get value from other screen, but i'm going to hardcode it
+                String info = editEndDate.getText().toString();
+                if(info.isEmpty()) info="12/01/24";
+                try {
+                    myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(TermDetailsActivity.this, endDatePicker, myCalendarStart.get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
 
         // Display courses in Term Details
         RecyclerView recyclerView = findViewById(R.id.termRecyclerview);
@@ -88,12 +162,59 @@ public class TermDetailsActivity extends AppCompatActivity {
         courseAdapter.setCourses(filteredCourses);
     }
 
+    public void updateLabelStart() {
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        editStartDate.setText(sdf.format(myCalendarStart.getTime()));
+    }
+    public void updateLabelEnd() {
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        editEndDate.setText(sdf.format(myCalendarStart.getTime()));
+    }
+
+//    public void notifyTerm(Term term, String type) {
+//        String startDate = term.getStartDate();
+//        String endDate = term.getEndDate();
+//        String myFormat = "MM/dd/yy";
+//        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+//        Date myDate = null;
+//        try {
+//            if(type == "start") {
+//                myDate = sdf.parse(startDate);
+//            } else {
+//                myDate = sdf.parse(endDate);
+//            }
+//        } catch (ParseException e) {
+//            throw new RuntimeException(e);
+//        }
+//        Long trigger = myDate.getTime();
+//        Intent intent = new Intent(TermDetailsActivity.this, MyReceiver.class);
+//        if(type == "starT") {
+//            intent.putExtra("termTitleStart", term.getTitle());
+//            intent.putExtra("date", term.getStartDate());
+//        } else {
+//            intent.putExtra("termTitleEnd", term.getTitle());
+//            intent.putExtra("date", term.getEndDate());
+//        }
+//
+//        PendingIntent sender = PendingIntent.getBroadcast(TermDetailsActivity.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
+//    }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_termdetails, menu);
         return true;
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
         if (item.getItemId() == R.id.termSave) {
             Term term;
             if (termId == -1) {
@@ -102,24 +223,25 @@ public class TermDetailsActivity extends AppCompatActivity {
                         termId = 1;
                         term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
                         repository.insertTerm(term);
+                        Toast.makeText(TermDetailsActivity.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
                         this.finish();
                     }
                     else {
                         termId = repository.getmAllTerms().get(repository.getmAllTerms().size() - 1).getTermId() + 1;
                         term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
                         repository.insertTerm(term);
+                        Toast.makeText(TermDetailsActivity.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
+                        this.finish();
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+            } else {
+                term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
+                repository.updateTerm(term);
+                Toast.makeText(TermDetailsActivity.this, term.getTitle() + " term was updated", Toast.LENGTH_LONG).show();
+                this.finish();
             }
-        } else {
-//            Log.d("termTag", "TermId is + " + termId);
-//            Log.d("termTag", "TermTITLE is + " + editTitle);
-//            Log.d("termTag", "TermSTART is + " + editStartDate);
-//            Log.d("termTag", "TermEND is + " + editEndDate);
-            term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
-            repository.updateTerm(term);
         }
 
         // Delete current Term
@@ -134,21 +256,41 @@ public class TermDetailsActivity extends AppCompatActivity {
                 }
                 if (numCourses == 0) {
                     repository.deleteTerm(currentTerm);
-                    Toast.makeText(TermDetailsActivity.this, currentTerm.getTitle() + " was deleted", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TermDetailsActivity.this, currentTerm.getTitle() + " term was deleted", Toast.LENGTH_LONG).show();
+                    this.finish();
                 } else {
                     Toast.makeText(TermDetailsActivity.this, "Can't delete a term with courses in it", Toast.LENGTH_LONG).show();
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            this.finish();
         }
+        // Notify
+        if (item.getItemId() == R.id.termNotify) {
+            String dateFromScreen = editStartDate.getText().toString();
+            String myFormat = "MM/dd/yy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            Date myDate = null;
+            try {
+                myDate = sdf.parse(dateFromScreen);
 
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                //Receiver
+                Long trigger = myDate.getTime();
+                Intent intent = new Intent(TermDetailsActivity.this, MyReceiver.class);
+                intent.putExtra("key",  editTitle.getText().toString() + " term is starting");
+                PendingIntent sender = PendingIntent.getBroadcast(TermDetailsActivity.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     protected void onResume() {

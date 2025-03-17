@@ -31,7 +31,7 @@ public class TermAdapter extends RecyclerView.Adapter<TermAdapter.TermViewHolder
         private final TextView termDateView;
         public TermViewHolder(@NonNull View itemView) {
             super(itemView);
-            termItemView = itemView.findViewById(R.id.textView2);
+            termItemView = itemView.findViewById(R.id.termTitleView);
             termDateView = itemView.findViewById(R.id.textDateView);
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();

@@ -9,16 +9,14 @@ public class Assessment {
     @PrimaryKey(autoGenerate = true)
     private int assessmentId;
     private String title;
-    private String startDate;
-    private String endDate;
+    private String date;
     private String type;
     private int courseId;
 
-    public Assessment(int assessmentId, String title, String startDate, String endDate, String type, int courseId) {
+    public Assessment(int assessmentId, String title, String date, String type, int courseId) {
         this.assessmentId = assessmentId;
         this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.date = date;
         this.type = type;
         this.courseId = courseId;
     }
@@ -39,20 +37,12 @@ public class Assessment {
         this.title = title;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public String getDate() {
+        return date;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getType() {

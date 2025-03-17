@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -79,6 +80,7 @@ public class InstructorDetails extends AppCompatActivity {
                         instructorId = repository.getmAllInstructors().get(repository.getmAllInstructors().size() - 1).getInstructorId() + 1;
                         instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
                         repository.insertInstructor(instructor);
+                        Toast.makeText(InstructorDetails.this, instructor.getName() + " was added", Toast.LENGTH_LONG).show();
                         this.finish();
                     }
                 } catch (Exception e) {
@@ -87,7 +89,17 @@ public class InstructorDetails extends AppCompatActivity {
             } else {
                 instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
                 repository.updateInstructor(instructor);
+                Toast.makeText(InstructorDetails.this, instructor.getName() + " was updated", Toast.LENGTH_LONG).show();
                 this.finish();
+            }
+        }
+        if(item.getItemId() == R.id.instructorDelete) {
+            for (Instructor instructor : repository.getmAllInstructors()) {
+                if (instructor.getInstructorId() == instructorId) {
+                    repository.deleteInstructor(instructor);
+                    Toast.makeText(InstructorDetails.this, instructor.getName() + " was deleted", Toast.LENGTH_LONG).show();
+                    this.finish();
+                }
             }
         }
         return super.onOptionsItemSelected(item);
