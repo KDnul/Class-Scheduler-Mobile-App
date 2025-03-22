@@ -4,11 +4,14 @@
 
     <item
         android:id="@+id/saveCourse"
-        android:title="Save" />
+        android:title="@string/save" />
     <item
         android:id="@+id/shareNotes"
-        android:title="Share" />
+        android:title="@string/share" />
+    <item
+        android:id="@+id/courseNotify"
+        android:title="@string/notify" />
     <item
         android:id="@+id/deleteCourse"
-        android:title="Delete" />
+        android:title="@string/delete" />
 </menu>

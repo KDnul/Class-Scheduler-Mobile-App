@@ -1,14 +1,18 @@
 package com.example.c196mobiledevelopment.UI;
 
+import android.app.AlarmManager;
+import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,8 +34,14 @@ import com.example.c196mobiledevelopment.entities.Course;
 import com.example.c196mobiledevelopment.entities.Instructor;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class CourseDetails extends AppCompatActivity {
     private Repository repository;
@@ -39,8 +49,8 @@ public class CourseDetails extends AppCompatActivity {
     TextView instructorPhone;
     TextView instructorEmail;
     EditText courseTitle;
-    EditText courseStart;
-    EditText courseEnd;
+    TextView courseStart;
+    TextView courseEnd;
     EditText courseNote;
     String title;
     String startDate;
@@ -52,6 +62,10 @@ public class CourseDetails extends AppCompatActivity {
     int termId;
     int instructorId;
     String courseStatus;
+
+    DatePickerDialog.OnDateSetListener startDatePicker;
+    DatePickerDialog.OnDateSetListener endDatePicker;
+    final Calendar myCalendarStart = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +99,63 @@ public class CourseDetails extends AppCompatActivity {
         courseStart.setText(startDate);
         courseEnd.setText(endDate);
         courseNote.setText(note);
+
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        // Date Picker
+        startDatePicker = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                myCalendarStart.set(Calendar.YEAR, year);
+                myCalendarStart.set(Calendar.MONTH, monthOfYear);
+                myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelStart();
+            }
+        };
+        endDatePicker = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                myCalendarStart.set(Calendar.YEAR, year);
+                myCalendarStart.set(Calendar.MONTH, monthOfYear);
+                myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelEnd();
+            }
+        };
+
+        courseStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-Generated method stub
+                Date date;
+                // get value from other screen, but i'm going to hardcode it
+                String info = courseStart.getText().toString();
+                if(info.isEmpty()) info="12/01/24";
+                try {
+                    myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(CourseDetails.this, startDatePicker, myCalendarStart.get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        courseEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-Generated method stub
+                Date date;
+                // get value from other screen, but i'm going to hardcode it
+                String info = courseEnd.getText().toString();
+                if(info.isEmpty()) info="12/01/24";
+                try {
+                    myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(CourseDetails.this, endDatePicker, myCalendarStart.get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
 
         // Course Instructor Spinner
         ArrayList<Instructor> instructorArrayList = new ArrayList<>();
@@ -173,6 +244,19 @@ public class CourseDetails extends AppCompatActivity {
 
     }
 
+    public void updateLabelStart() {
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        courseStart.setText(sdf.format(myCalendarStart.getTime()));
+    }
+    public void updateLabelEnd() {
+        String myFormat = "MM/dd/yy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        courseEnd.setText(sdf.format(myCalendarStart.getTime()));
+    }
+
     private int getIndex(Spinner spinner, String courseStatus) {
 
         int index = 0;
@@ -199,57 +283,69 @@ public class CourseDetails extends AppCompatActivity {
         if (item.getItemId() == R.id.saveCourse) {
             if (termId == -1) {
                 Toast.makeText(CourseDetails.this, "Please make a term first", Toast.LENGTH_LONG).show();
+                this.finish();;
             } else {
-                Log.d("click", "Save course has been clicked");
-                Course course;
-                Spinner cSpinner = findViewById(R.id.courseStatusSpinner);
-                courseStatus = cSpinner.getSelectedItem().toString();
-                if (courseId == -1) {
-                    try {
-                        if (repository.getmAllCourses().isEmpty()){
-                            courseId = 1;
-                            course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
-                            repository.insertCourse(course);
-                            Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
-                            this.finish();
-                        }
+                String myFormat = "MM/dd/yy";
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                try {
+                    Date start = sdf.parse(courseStart.getText().toString());
+                    Date end = sdf.parse(courseEnd.getText().toString());
+                    assert start != null;
 
-                        else {
-                            Log.d("courseTag", "Course id is before repository: " + courseId);
-                            courseId = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseId() + 1;
+                    // Validation Check
+                    if (courseTitle.getText().length() < 1) {Toast.makeText(CourseDetails.this, "Missing Title", Toast.LENGTH_LONG).show();}
+                    else if (courseStart.getText().length() < 1) {Toast.makeText(CourseDetails.this, "Missing Start Date", Toast.LENGTH_LONG).show();}
+                    else if (courseEnd.getText().length() < 1) {Toast.makeText(CourseDetails.this, "Missing End Date", Toast.LENGTH_LONG).show();}
+                    else if (start.after(end)) {Toast.makeText(CourseDetails.this, "Start Date cannot be after End Date", Toast.LENGTH_LONG).show();}
+                    else {
+                        Course course;
+                        Spinner cSpinner = findViewById(R.id.courseStatusSpinner);
+                        courseStatus = cSpinner.getSelectedItem().toString();
+                        if (courseId == -1) {
+                            try {
+                                if (repository.getmAllCourses().isEmpty()){
+                                    courseId = 1;
+                                    course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
+                                    repository.insertCourse(course);
+                                    Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
+                                    this.finish();
+                                }
+
+                                else {
+                                    courseId = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseId() + 1;
+                                    course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
+                                    repository.insertCourse(course);
+                                    Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
+                                    this.finish();
+                                }
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                            return true;
+                        } else {
                             course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
-                            repository.insertCourse(course);
-                            Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
+                            repository.updateCourse(course);
+                            Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was updated from Course List", Toast.LENGTH_LONG).show();
                             this.finish();
                         }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
                     }
-                    return true;
-                } else {
-                    course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
-                    repository.updateCourse(course);
-                    Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was deleted from Course List", Toast.LENGTH_LONG).show();
-                    this.finish();
+
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
 
         // Share details of the course
         if (item.getItemId() == R.id.shareNotes) {
-            if (termId == -1) {
-                Toast.makeText(CourseDetails.this, "Please make a term first", Toast.LENGTH_LONG).show();
-            } else {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, courseNote.getText().toString());
-                sendIntent.putExtra(Intent.EXTRA_TITLE, courseNote.getText().toString());
-                sendIntent.setType("text/plain");
-                Intent shareIntent = Intent.createChooser(sendIntent, null);
-                startActivity(shareIntent);
-                return true;
-
-            }
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, courseNote.getText().toString());
+            sendIntent.putExtra(Intent.EXTRA_TITLE, courseNote.getText().toString());
+            sendIntent.setType("text/plain");
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            startActivity(shareIntent);
+            return true;
         }
 
 
@@ -273,6 +369,32 @@ public class CourseDetails extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
             this.finish();
+        }
+
+        // Notify Course
+        if (item.getItemId() == R.id.courseNotify) {
+            String dateFromScreen = courseStart.getText().toString();
+            String myFormat = "MM/dd/yy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            Date myDate = null;
+            try {
+                myDate = sdf.parse(dateFromScreen);
+
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                //Receiver
+                Long trigger = myDate.getTime();
+                Intent intent = new Intent(CourseDetails.this, MyReceiver.class);
+                intent.putExtra("key",  courseTitle.getText().toString() + " course is starting today");
+                PendingIntent sender = PendingIntent.getBroadcast(CourseDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -310,7 +432,6 @@ public class CourseDetails extends AppCompatActivity {
                     intent.putExtra("phoneNumber", currentInstructor.getPhone());
                     startActivity(intent);
                 });
-                Log.d("Instructor", "INSTRUCTOR ID IS: " + instructorId);
             }
 
             @Override

@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/termSave"
-        android:title="Save" />
+        android:title="@string/save" />
     <item
         android:id="@+id/termNotify"
-        android:title="Notify" />
+        android:title="@string/notify" />
     <item
         android:id="@+id/termDelete"
-        android:title="Delete" />
+        android:title="@string/delete" />
 </menu>

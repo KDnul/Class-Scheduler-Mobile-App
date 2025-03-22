@@ -66,33 +66,44 @@ public class InstructorDetails extends AppCompatActivity {
         if(item.getItemId() == android.R.id.home) {
             return true;
         }
+
+        // Save Instructor
         if(item.getItemId() == R.id.instructorSave) {
-            Instructor instructor;
-            Log.d("instructor", "Instructor id when editing an instructor is: " + instructorId);
-            if (instructorId == -1) {
-                try {
-                    if (repository.getmAllInstructors().isEmpty()) {
-                        instructorId = 1;
-                        instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
-                        repository.insertInstructor(instructor);
-                        this.finish();
-                    } else {
-                        instructorId = repository.getmAllInstructors().get(repository.getmAllInstructors().size() - 1).getInstructorId() + 1;
-                        instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
-                        repository.insertInstructor(instructor);
-                        Toast.makeText(InstructorDetails.this, instructor.getName() + " was added", Toast.LENGTH_LONG).show();
-                        this.finish();
+            // Validation Check
+            if(instructorName.getText().length() < 1) {Toast.makeText(InstructorDetails.this, "Missing Name", Toast.LENGTH_LONG).show();}
+            else if(instructorEmail.getText().length() < 1) {Toast.makeText(InstructorDetails.this, "Missing Email", Toast.LENGTH_LONG).show();}
+            else if(instructorPhone.getText().length() < 1) {Toast.makeText(InstructorDetails.this, "Missing Phone Number", Toast.LENGTH_LONG).show();}
+            else {
+                Instructor instructor;
+                Log.d("instructor", "Instructor id when editing an instructor is: " + instructorId);
+                if (instructorId == -1) {
+                    try {
+                        if (repository.getmAllInstructors().isEmpty()) {
+                            instructorId = 1;
+                            instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
+                            repository.insertInstructor(instructor);
+                            this.finish();
+                        } else {
+                            instructorId = repository.getmAllInstructors().get(repository.getmAllInstructors().size() - 1).getInstructorId() + 1;
+                            instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
+                            repository.insertInstructor(instructor);
+                            Toast.makeText(InstructorDetails.this, instructor.getName() + " was added", Toast.LENGTH_LONG).show();
+                            this.finish();
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } else {
+                    instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
+                    repository.updateInstructor(instructor);
+                    Toast.makeText(InstructorDetails.this, instructor.getName() + " was updated", Toast.LENGTH_LONG).show();
+                    this.finish();
                 }
-            } else {
-                instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
-                repository.updateInstructor(instructor);
-                Toast.makeText(InstructorDetails.this, instructor.getName() + " was updated", Toast.LENGTH_LONG).show();
-                this.finish();
             }
+
         }
+
+        // Delete Instructor
         if(item.getItemId() == R.id.instructorDelete) {
             for (Instructor instructor : repository.getmAllInstructors()) {
                 if (instructor.getInstructorId() == instructorId) {

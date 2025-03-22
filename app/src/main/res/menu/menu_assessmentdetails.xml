@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/assessmentSave"
-        android:title="Save" />
+        android:title="@string/save" />
+    <item
+        android:id="@+id/assessmentNotify"
+        android:title="@string/notify" />
     <item
         android:id="@+id/assessmentDelete"
-        android:title="Delete" />
+        android:title="@string/delete" />
 </menu>

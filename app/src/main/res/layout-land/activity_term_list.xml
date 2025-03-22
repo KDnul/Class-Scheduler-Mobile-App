@@ -8,7 +8,7 @@
     tools:context=".UI.TermList">
 
     <LinearLayout
-        android:layout_width="408dp"
+        android:layout_width="0dp"
         android:layout_height="20dp"
         android:layout_marginStart="5dp"
         android:orientation="horizontal"
@@ -40,13 +40,13 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview"
-                android:layout_width="409dp"
+                android:layout_width="match_parent"
                 android:layout_height="657dp"
                 android:layout_marginTop="16dp" />
         </LinearLayout>

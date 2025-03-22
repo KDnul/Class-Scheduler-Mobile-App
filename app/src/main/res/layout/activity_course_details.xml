@@ -29,7 +29,7 @@
                     android:layout_width="55dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:text="Course:" />
+                    android:text="@string/course" />
 
                 <EditText
                     android:id="@+id/courseTitleEditText"
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:hint="Course Title"
+                    android:hint="@string/course_title"
                     android:inputType="text" />
             </LinearLayout>
 
@@ -51,15 +51,15 @@
                     android:layout_width="55dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:text="Start Date:" />
+                    android:text="@string/start_date" />
 
-                <EditText
+                <TextView
                     android:id="@+id/courseStartEditText"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:hint="Start Date"
+                    android:hint="@string/start_date"
                     android:inputType="text" />
             </LinearLayout>
 
@@ -73,15 +73,15 @@
                     android:layout_width="55dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:text="End Date" />
+                    android:text="@string/end_date" />
 
-                <EditText
+                <TextView
                     android:id="@+id/courseEndEditText"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:hint="End Date"
+                    android:hint="@string/end_date"
                     android:inputType="text" />
             </LinearLayout>
         </LinearLayout>
@@ -105,7 +105,7 @@
         android:layout_width="59dp"
         android:layout_height="26dp"
         android:layout_marginTop="8dp"
-        android:text="Notes"
+        android:text="@string/notes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
@@ -126,8 +126,8 @@
         android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:gravity="right"
-        android:text="Instructor:"
+        android:gravity="end"
+        android:text="@string/instructor"
         app:layout_constraintEnd_toStartOf="@+id/courseInstructorSpinner"
         app:layout_constraintHorizontal_bias="0.969"
         app:layout_constraintStart_toStartOf="parent"
@@ -138,7 +138,7 @@
         android:layout_width="65dp"
         android:layout_height="29dp"
         android:layout_marginEnd="112dp"
-        android:text="Edit"
+        android:text="@string/edit"
         android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/courseInstructorSpinner" />
@@ -147,7 +147,7 @@
         android:id="@+id/addInstructorBtn"
         android:layout_width="65dp"
         android:layout_height="29dp"
-        android:text="Add"
+        android:text="@string/add"
         android:textSize="8sp"
         app:layout_constraintEnd_toStartOf="@+id/editInstructorBtn"
         app:layout_constraintHorizontal_bias="0.923"
@@ -176,7 +176,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Phone: "
+                android:text="@string/phone"
                 android:textStyle="bold" />
 
             <TextView
@@ -184,7 +184,7 @@
                 android:layout_width="362dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Phone Number" />
+                android:text="@string/phone_number" />
 
         </LinearLayout>
 
@@ -198,7 +198,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Email:"
+                android:text="@string/email"
                 android:textStyle="bold" />
 
             <TextView
@@ -206,7 +206,7 @@
                 android:layout_width="373dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="email@email.com" />
+                android:text="@string/email_email_com" />
         </LinearLayout>
 
     </LinearLayout>
@@ -243,6 +243,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:clickable="true"
+        android:contentDescription="@string/add_assessments_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/baseline_add_24" />
@@ -252,7 +253,7 @@
         android:layout_width="59dp"
         android:layout_height="24dp"
         android:layout_marginTop="16dp"
-        android:text="Status"
+        android:text="@string/status"
         app:layout_constraintEnd_toStartOf="@+id/courseStatusSpinner"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -275,7 +276,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="163dp"
         android:layout_marginBottom="2dp"
-        android:text="Assessments"
+        android:text="@string/assessments"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/scrollView5"
         app:layout_constraintEnd_toEndOf="parent"

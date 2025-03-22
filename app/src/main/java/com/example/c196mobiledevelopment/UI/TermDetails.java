@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class TermDetailsActivity extends AppCompatActivity {
+public class TermDetails extends AppCompatActivity {
     private Repository repository;
     EditText editTitle;
     TextView editStartDate;
@@ -49,11 +49,11 @@ public class TermDetailsActivity extends AppCompatActivity {
     String endDate;
     int termId;
     int numCourses;
-    Term term;
     Term currentTerm;
     DatePickerDialog.OnDateSetListener startDatePicker;
     DatePickerDialog.OnDateSetListener endDatePicker;
     final Calendar myCalendarStart = Calendar.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,7 @@ public class TermDetailsActivity extends AppCompatActivity {
         // See Course Details when clicking a term
         FloatingActionButton fab = findViewById(R.id.courseAddFAB);
         fab.setOnClickListener(view -> {
-            Intent intent = new Intent(TermDetailsActivity.this, CourseDetails.class);
+            Intent intent = new Intent(TermDetails.this, CourseDetails.class);
             intent.putExtra("termId", termId);
             startActivity(intent);
         });
@@ -87,6 +87,9 @@ public class TermDetailsActivity extends AppCompatActivity {
         editStartDate.setText(startDate);
         editEndDate.setText(endDate);
 
+
+
+        // Date Picker
         String myFormat = "MM/dd/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
@@ -123,7 +126,7 @@ public class TermDetailsActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                new DatePickerDialog(TermDetailsActivity.this, startDatePicker, myCalendarStart.get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(TermDetails.this, startDatePicker, myCalendarStart.get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
 
@@ -141,7 +144,7 @@ public class TermDetailsActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                new DatePickerDialog(TermDetailsActivity.this, endDatePicker, myCalendarStart.get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(TermDetails.this, endDatePicker, myCalendarStart.get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
 
@@ -175,36 +178,6 @@ public class TermDetailsActivity extends AppCompatActivity {
         editEndDate.setText(sdf.format(myCalendarStart.getTime()));
     }
 
-//    public void notifyTerm(Term term, String type) {
-//        String startDate = term.getStartDate();
-//        String endDate = term.getEndDate();
-//        String myFormat = "MM/dd/yy";
-//        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-//        Date myDate = null;
-//        try {
-//            if(type == "start") {
-//                myDate = sdf.parse(startDate);
-//            } else {
-//                myDate = sdf.parse(endDate);
-//            }
-//        } catch (ParseException e) {
-//            throw new RuntimeException(e);
-//        }
-//        Long trigger = myDate.getTime();
-//        Intent intent = new Intent(TermDetailsActivity.this, MyReceiver.class);
-//        if(type == "starT") {
-//            intent.putExtra("termTitleStart", term.getTitle());
-//            intent.putExtra("date", term.getStartDate());
-//        } else {
-//            intent.putExtra("termTitleEnd", term.getTitle());
-//            intent.putExtra("date", term.getEndDate());
-//        }
-//
-//        PendingIntent sender = PendingIntent.getBroadcast(TermDetailsActivity.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
-//    }
-
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_termdetails, menu);
         return true;
@@ -215,32 +188,51 @@ public class TermDetailsActivity extends AppCompatActivity {
             this.finish();
             return true;
         }
+        // Save Term
         if (item.getItemId() == R.id.termSave) {
-            Term term;
-            if (termId == -1) {
-                try {
-                    if (repository.getmAllTerms().isEmpty()) {
-                        termId = 1;
+            String myFormat = "MM/dd/yy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            try {
+                Date start = sdf.parse(editStartDate.getText().toString());
+                Date end = sdf.parse(editEndDate.getText().toString());
+                assert start != null;
+
+                // Validation Check
+                if (editTitle.getText().length() < 1) {Toast.makeText(TermDetails.this, "Missing Title", Toast.LENGTH_LONG).show();}
+                else if (editStartDate.getText().length() < 1){Toast.makeText(TermDetails.this, "Missing Start date", Toast.LENGTH_LONG).show();}
+                else if (editEndDate.getText().length() < 1){Toast.makeText(TermDetails.this, "Missing End date", Toast.LENGTH_LONG).show();}
+                else if (start.after(end)) {Toast.makeText(TermDetails.this, "Start Date cannot be after end date", Toast.LENGTH_LONG).show();}
+                else {
+                    Term term;
+                    if (termId == -1) {
+                        try {
+                            if (repository.getmAllTerms().isEmpty()) {
+                                termId = 1;
+                                term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
+                                repository.insertTerm(term);
+                                Toast.makeText(TermDetails.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
+                                this.finish();
+                            }
+                            else {
+                                termId = repository.getmAllTerms().get(repository.getmAllTerms().size() - 1).getTermId() + 1;
+                                term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
+                                repository.insertTerm(term);
+                                Toast.makeText(TermDetails.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
+                                this.finish();
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
                         term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
-                        repository.insertTerm(term);
-                        Toast.makeText(TermDetailsActivity.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
+                        repository.updateTerm(term);
+                        Toast.makeText(TermDetails.this, term.getTitle() + " term was updated", Toast.LENGTH_LONG).show();
                         this.finish();
                     }
-                    else {
-                        termId = repository.getmAllTerms().get(repository.getmAllTerms().size() - 1).getTermId() + 1;
-                        term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
-                        repository.insertTerm(term);
-                        Toast.makeText(TermDetailsActivity.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
-                        this.finish();
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+
                 }
-            } else {
-                term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
-                repository.updateTerm(term);
-                Toast.makeText(TermDetailsActivity.this, term.getTitle() + " term was updated", Toast.LENGTH_LONG).show();
-                this.finish();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -256,16 +248,16 @@ public class TermDetailsActivity extends AppCompatActivity {
                 }
                 if (numCourses == 0) {
                     repository.deleteTerm(currentTerm);
-                    Toast.makeText(TermDetailsActivity.this, currentTerm.getTitle() + " term was deleted", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TermDetails.this, currentTerm.getTitle() + " term was deleted", Toast.LENGTH_LONG).show();
                     this.finish();
                 } else {
-                    Toast.makeText(TermDetailsActivity.this, "Can't delete a term with courses in it", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TermDetails.this, "Can't delete a term with courses in it", Toast.LENGTH_LONG).show();
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        // Notify
+        // Notify Term
         if (item.getItemId() == R.id.termNotify) {
             String dateFromScreen = editStartDate.getText().toString();
             String myFormat = "MM/dd/yy";
@@ -280,9 +272,9 @@ public class TermDetailsActivity extends AppCompatActivity {
             try {
                 //Receiver
                 Long trigger = myDate.getTime();
-                Intent intent = new Intent(TermDetailsActivity.this, MyReceiver.class);
+                Intent intent = new Intent(TermDetails.this, MyReceiver.class);
                 intent.putExtra("key",  editTitle.getText().toString() + " term is starting");
-                PendingIntent sender = PendingIntent.getBroadcast(TermDetailsActivity.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+                PendingIntent sender = PendingIntent.getBroadcast(TermDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
                 AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
             } catch (Exception e) {

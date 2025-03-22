@@ -21,21 +21,21 @@
             android:id="@+id/courseNameView"
             android:layout_width="82dp"
             android:layout_height="17dp"
-            android:text="Title"
+            android:text="@string/title"
             android:textAlignment="textStart" />
 
         <TextView
             android:id="@+id/courseDateView"
             android:layout_width="199dp"
             android:layout_height="wrap_content"
-            android:text="Date"
+            android:text="@string/date"
             android:textAlignment="center" />
 
         <TextView
             android:id="@+id/courseStatusView"
             android:layout_width="127dp"
             android:layout_height="wrap_content"
-            android:text="Status"
+            android:text="@string/status"
             android:textAlignment="center" />
     </LinearLayout>
 

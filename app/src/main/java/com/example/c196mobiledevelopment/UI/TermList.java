@@ -35,7 +35,7 @@ public class TermList extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(view -> {
-            Intent intent = new Intent(TermList.this, TermDetailsActivity.class);
+            Intent intent = new Intent(TermList.this, TermDetails.class);
             startActivity(intent);
         });
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
