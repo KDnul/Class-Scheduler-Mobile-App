@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -115,12 +114,11 @@ public class TermDetails extends AppCompatActivity {
         editStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("date", "Start date has been clicked");
                 // TODO Auto-Generated method stub
                 Date date;
                 // get value from other screen, but i'm going to hardcode it
                 String info = editStartDate.getText().toString();
-                if(info.isEmpty()) info="12/01/24";
+                if(info.isEmpty()) info="01/01/25";
                 try {
                     myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
                 } catch (ParseException e) {
@@ -133,12 +131,11 @@ public class TermDetails extends AppCompatActivity {
         editEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("date", "Start date has been clicked");
                 // TODO Auto-Generated method stub
                 Date date;
                 // get value from other screen, but i'm going to hardcode it
                 String info = editEndDate.getText().toString();
-                if(info.isEmpty()) info="12/01/24";
+                if(info.isEmpty()) info="01/01/25";
                 try {
                     myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
                 } catch (ParseException e) {
@@ -193,41 +190,42 @@ public class TermDetails extends AppCompatActivity {
             String myFormat = "MM/dd/yy";
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             try {
-                Date start = sdf.parse(editStartDate.getText().toString());
-                Date end = sdf.parse(editEndDate.getText().toString());
-                assert start != null;
-
                 // Validation Check
                 if (editTitle.getText().length() < 1) {Toast.makeText(TermDetails.this, "Missing Title", Toast.LENGTH_LONG).show();}
                 else if (editStartDate.getText().length() < 1){Toast.makeText(TermDetails.this, "Missing Start date", Toast.LENGTH_LONG).show();}
                 else if (editEndDate.getText().length() < 1){Toast.makeText(TermDetails.this, "Missing End date", Toast.LENGTH_LONG).show();}
-                else if (start.after(end)) {Toast.makeText(TermDetails.this, "Start Date cannot be after end date", Toast.LENGTH_LONG).show();}
                 else {
-                    Term term;
-                    if (termId == -1) {
-                        try {
-                            if (repository.getmAllTerms().isEmpty()) {
-                                termId = 1;
-                                term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
-                                repository.insertTerm(term);
-                                Toast.makeText(TermDetails.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
-                                this.finish();
+                    Date start = sdf.parse(editStartDate.getText().toString());
+                    Date end = sdf.parse(editEndDate.getText().toString());
+                    assert start != null;
+                    if (start.after(end)) {Toast.makeText(TermDetails.this, "Start Date cannot be after end date", Toast.LENGTH_LONG).show();}
+                    else {
+                        Term term;
+                        if (termId == -1) {
+                            try {
+                                if (repository.getmAllTerms().isEmpty()) {
+                                    termId = 1;
+                                    term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
+                                    repository.insertTerm(term);
+                                    Toast.makeText(TermDetails.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
+                                    this.finish();
+                                }
+                                else {
+                                    termId = repository.getmAllTerms().get(repository.getmAllTerms().size() - 1).getTermId() + 1;
+                                    term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
+                                    repository.insertTerm(term);
+                                    Toast.makeText(TermDetails.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
+                                    this.finish();
+                                }
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
                             }
-                            else {
-                                termId = repository.getmAllTerms().get(repository.getmAllTerms().size() - 1).getTermId() + 1;
-                                term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
-                                repository.insertTerm(term);
-                                Toast.makeText(TermDetails.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
-                                this.finish();
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
+                        } else {
+                            term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
+                            repository.updateTerm(term);
+                            Toast.makeText(TermDetails.this, term.getTitle() + " term was updated", Toast.LENGTH_LONG).show();
+                            this.finish();
                         }
-                    } else {
-                        term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
-                        repository.updateTerm(term);
-                        Toast.makeText(TermDetails.this, term.getTitle() + " term was updated", Toast.LENGTH_LONG).show();
-                        this.finish();
                     }
 
                 }

@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,9 +40,8 @@ public class AssessmentDetails extends AppCompatActivity {
     EditText assessmentTitle;
     TextView assessmentDate;
     Spinner spinner;
-    String title;
+    String assessmentName;
     String date;
-    String endDate;
     String assessmentType;
     int assessmentId;
     int courseId;
@@ -65,15 +63,14 @@ public class AssessmentDetails extends AppCompatActivity {
 
         // Edit Details of an Assessment
         assessmentTitle = findViewById(R.id.assessmentTitleEditText);
-        assessmentDate = findViewById(R.id.assessmentDateEditText);
+        assessmentDate = findViewById(R.id.assessmentDateText);
         assessmentType = getIntent().getStringExtra("type");
         assessmentId = getIntent().getIntExtra("assessmentId", -1);
         courseId = getIntent().getIntExtra("courseId", -1);
 
-        title = getIntent().getStringExtra("title");
+        assessmentName = getIntent().getStringExtra("title");
         date = getIntent().getStringExtra("date");
-        endDate = getIntent().getStringExtra("endDate");
-        assessmentTitle.setText(title);
+        assessmentTitle.setText(assessmentName);
         assessmentDate.setText(date);
 
         // Date Picker
@@ -93,12 +90,11 @@ public class AssessmentDetails extends AppCompatActivity {
         assessmentDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("date", "Start date has been clicked");
                 // TODO Auto-Generated method stub
                 Date date;
                 // get value from other screen, but i'm going to hardcode it
                 String info = assessmentDate.getText().toString();
-                if(info.isEmpty()) info="12/01/24";
+                if(info.isEmpty()) info="01/01/25";
                 try {
                     myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
                 } catch (ParseException e) {
@@ -157,7 +153,7 @@ public class AssessmentDetails extends AppCompatActivity {
             } else {
                 // Validation Check
                 if(assessmentTitle.getText().length() < 1) {Toast.makeText(AssessmentDetails.this, "Missing Title", Toast.LENGTH_LONG).show();}
-                else if(assessmentDate.getText().length() < 1) {Toast.makeText(AssessmentDetails.this, "No Date Selected", Toast.LENGTH_LONG).show();}
+                else if(assessmentDate.getText().length() < 1) {Toast.makeText(AssessmentDetails.this, "Missing Date", Toast.LENGTH_LONG).show();}
                 else {
                     Assessment assessment;
                     Spinner spinner = findViewById(R.id.assessmentTypeSpinner);
@@ -206,7 +202,7 @@ public class AssessmentDetails extends AppCompatActivity {
                 //Receiver
                 Long trigger = myDate.getTime();
                 Intent intent = new Intent(AssessmentDetails.this, MyReceiver.class);
-                intent.putExtra("key",  assessmentDate.getText().toString() + " assessment is today!");
+                intent.putExtra("key",  assessmentTitle.getText().toString() + " assessment is today!");
                 PendingIntent sender = PendingIntent.getBroadcast(AssessmentDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
                 AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
@@ -229,6 +225,4 @@ public class AssessmentDetails extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 }

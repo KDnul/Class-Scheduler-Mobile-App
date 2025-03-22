@@ -130,7 +130,7 @@ public class CourseDetails extends AppCompatActivity {
                 Date date;
                 // get value from other screen, but i'm going to hardcode it
                 String info = courseStart.getText().toString();
-                if(info.isEmpty()) info="12/01/24";
+                if(info.isEmpty()) info="01/01/25";
                 try {
                     myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
                 } catch (ParseException e) {
@@ -147,7 +147,7 @@ public class CourseDetails extends AppCompatActivity {
                 Date date;
                 // get value from other screen, but i'm going to hardcode it
                 String info = courseEnd.getText().toString();
-                if(info.isEmpty()) info="12/01/24";
+                if(info.isEmpty()) info="01/01/25";
                 try {
                     myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
                 } catch (ParseException e) {
@@ -281,6 +281,7 @@ public class CourseDetails extends AppCompatActivity {
         }
         // Save details of the course and make it
         if (item.getItemId() == R.id.saveCourse) {
+            Spinner iSpinner = findViewById(R.id.courseInstructorSpinner);
             if (termId == -1) {
                 Toast.makeText(CourseDetails.this, "Please make a term first", Toast.LENGTH_LONG).show();
                 this.finish();;
@@ -288,46 +289,50 @@ public class CourseDetails extends AppCompatActivity {
                 String myFormat = "MM/dd/yy";
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                 try {
-                    Date start = sdf.parse(courseStart.getText().toString());
-                    Date end = sdf.parse(courseEnd.getText().toString());
-                    assert start != null;
 
                     // Validation Check
                     if (courseTitle.getText().length() < 1) {Toast.makeText(CourseDetails.this, "Missing Title", Toast.LENGTH_LONG).show();}
                     else if (courseStart.getText().length() < 1) {Toast.makeText(CourseDetails.this, "Missing Start Date", Toast.LENGTH_LONG).show();}
                     else if (courseEnd.getText().length() < 1) {Toast.makeText(CourseDetails.this, "Missing End Date", Toast.LENGTH_LONG).show();}
-                    else if (start.after(end)) {Toast.makeText(CourseDetails.this, "Start Date cannot be after End Date", Toast.LENGTH_LONG).show();}
+                    else if (iSpinner.getSelectedItem() == null) {Toast.makeText(CourseDetails.this, "Missing Instructor", Toast.LENGTH_LONG).show();}
                     else {
-                        Course course;
-                        Spinner cSpinner = findViewById(R.id.courseStatusSpinner);
-                        courseStatus = cSpinner.getSelectedItem().toString();
-                        if (courseId == -1) {
-                            try {
-                                if (repository.getmAllCourses().isEmpty()){
-                                    courseId = 1;
-                                    course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
-                                    repository.insertCourse(course);
-                                    Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
-                                    this.finish();
-                                }
-
-                                else {
-                                    courseId = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseId() + 1;
-                                    course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
-                                    repository.insertCourse(course);
-                                    Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
-                                    this.finish();
-                                }
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                            return true;
+                        Date start = sdf.parse(courseStart.getText().toString());
+                        Date end = sdf.parse(courseEnd.getText().toString());
+                        assert start != null;
+                        if (start.after(end)) {Toast.makeText(CourseDetails.this, "Start Date cannot be after End Date", Toast.LENGTH_LONG).show();
                         } else {
-                            course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
-                            repository.updateCourse(course);
-                            Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was updated from Course List", Toast.LENGTH_LONG).show();
-                            this.finish();
+                            Course course;
+                            Spinner cSpinner = findViewById(R.id.courseStatusSpinner);
+                            courseStatus = cSpinner.getSelectedItem().toString();
+                            if (courseId == -1) {
+                                try {
+                                    if (repository.getmAllCourses().isEmpty()){
+                                        courseId = 1;
+                                        course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
+                                        repository.insertCourse(course);
+                                        Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
+                                        this.finish();
+                                    }
+
+                                    else {
+                                        courseId = repository.getmAllCourses().get(repository.getmAllCourses().size() - 1).getCourseId() + 1;
+                                        course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
+                                        repository.insertCourse(course);
+                                        Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was added to Course List", Toast.LENGTH_LONG).show();
+                                        this.finish();
+                                    }
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                                return true;
+                            } else {
+                                course = new Course(courseId, courseTitle.getText().toString(), courseStart.getText().toString(), courseEnd.getText().toString(), courseStatus, courseNote.getText().toString(), termId, instructorId);
+                                repository.updateCourse(course);
+                                Toast.makeText(CourseDetails.this, courseTitle.getText().toString() +" was updated from Course List", Toast.LENGTH_LONG).show();
+                                this.finish();
+                            }
                         }
+
                     }
 
                 } catch (ParseException e) {

@@ -2,7 +2,6 @@ package com.example.c196mobiledevelopment.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,27 +40,6 @@ public class TermList extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         repository = new Repository(getApplication());
 
-
-//        Course course = new Course(0, "English", "1/1/24", "6/1/24", "Plan to Take", "test note", 1);
-//        Course course1 = new Course(0, "Math", "1/1/24", "6/1/24", "Completed", "test note", 1);
-//        repository.insertCourse(course);
-//        repository.insertCourse(course1);
-
-//        Term term = new Term(0, "Spring", "1/1/24", "6/5/24");
-//        Term term1 = new Term(0, "Fall", "7/1/24", "9/5/24");
-//        repository.insertTerm(term);
-//        repository.insertTerm(term1);
-
-        try {
-            if (repository.getmAllCourses().isEmpty()) {
-                Log.d("TermList", "GETMALLCOURSES LEADS TO NULL REFERENCE");
-            } else {
-                Log.d("TermList", "THERE ARE COURSES IN GETMALLCOURSES");
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
         // Display Terms
         try {
             List<Term> allTerms = repository.getmAllTerms();
@@ -72,14 +50,7 @@ public class TermList extends AppCompatActivity {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-//         System.out.println(getIntent().getStringExtra("test"));
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_term_list, menu);
-//        return true;
-//    }
 
     @Override
     protected void onResume() {
@@ -96,32 +67,5 @@ public class TermList extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        if (item.getItemId() == R.id.mysample) {
-//            Repository repository = new Repository(getApplication());
-//            Course course = new Course(0, "Math", "1/1/24", "6/1/24", CourseStatus.PLAN_TO_TAKE, "test note", term.getTermId() + 1);
-//            repository.insertCourse(course);
-//            repository.insertTerm(term);
-//            repository.insertTerm(term1);
-//            // Toast.makeText(TermList.this, "put in sample data", Toast.LENGTH_LONG).show();
-//            try {
-//                List<Term> allTerms= repository.getmAllTerms();
-//                RecyclerView recyclerView = findViewById(R.id.recyclerview);
-//                final TermAdapter termadapter = new TermAdapter(this);
-//                recyclerView.setAdapter(termadapter);
-//                termadapter.setTerms(allTerms);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//            return true;
-//        }
-//        if (item.getItemId() == android.R.id.home) {
-//            this.finish();
-//            return true;
-//        }
-//        return true;
-//    }
 
 }
