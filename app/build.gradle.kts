@@ -48,7 +48,6 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
-    val room_version = "2.6.1"
 
     implementation(libs.appcompat)
     implementation(libs.material)
