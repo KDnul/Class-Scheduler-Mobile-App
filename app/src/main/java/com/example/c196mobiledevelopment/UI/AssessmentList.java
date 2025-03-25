@@ -23,6 +23,11 @@ import java.util.List;
 public class AssessmentList extends AppCompatActivity {
     private Repository repository;
 
+    /**
+     * Displays the Assessment List activity with the appropriate xml tags.
+     * Populates the assessment RecyclerView with all the assessments from the database.
+     * when the add floating action button is clicked, it will lead the user to course list to add an assessment to.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +58,9 @@ public class AssessmentList extends AppCompatActivity {
         assessmentAdapter.setAssessments(assessmentList);
     }
 
+    /**
+     * Displays the assessment RecyclerViewer with the appropriate data from the database in case it there was a change.
+     */
     protected void onResume() {
         try {
             super.onResume();

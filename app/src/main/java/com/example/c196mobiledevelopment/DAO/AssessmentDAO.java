@@ -11,29 +11,32 @@ import com.example.c196mobiledevelopment.entities.Assessment;
 
 import java.util.List;
 
+/**
+ * Manipulate the data for Assessments
+ */
 @Dao
 public interface AssessmentDAO {
+    /**
+     * Inserts an assessment class to the database.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAssessment(Assessment assessment);
 
+    /**
+     * Updates an assessment class in the database.
+     */
     @Update
     void updateAssessment(Assessment assessment);
 
+    /**
+     * Deletes an assessment class from the database.
+     */
     @Delete
     void deleteAssessment(Assessment assessment);
 
+    /**
+     * Grabs all the assessments from the database.
+     */
     @Query("SELECT * FROM assessments")
     List<Assessment> getAllAssessments();
-
-    @Query("UPDATE assessments SET courseId = 0 WHERE courseId =:id")
-    void resetAssessmentCourse(int id);
-
-    @Query("UPDATE assessments SET courseId = 0 WHERE courseId =:courseId AND assessmentId =:assessmentId")
-    void resetAssessmentCourseSpecific(int courseId, int assessmentId);
-
-    @Query("DELETE FROM assessments")
-    void deleteAllAssessmentData();
-
-    @Query("SELECT COUNT(*) FROM assessments")
-    int countAssessments();
 }

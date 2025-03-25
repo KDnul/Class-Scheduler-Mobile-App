@@ -55,6 +55,9 @@ public class Repository {
         return mAllTerms;
     }
 
+    /**
+     * @param term Inserts a term class into the database.
+     */
     public void insertTerm(Term term) {
         databaseExecutor.execute(() -> {
             mTermDAO.insertTerm(term);
@@ -66,6 +69,9 @@ public class Repository {
         }
     }
 
+    /**
+     * @param term Updates an existing term in the database.
+     */
     public void updateTerm(Term term) {
         databaseExecutor.execute(() -> {
             mTermDAO.updateTerm(term);
@@ -77,20 +83,12 @@ public class Repository {
         }
     }
 
+    /**
+     * @param term Deletes a term in the database.
+     */
     public void deleteTerm(Term term) {
         databaseExecutor.execute(() -> {
             mTermDAO.deleteTerm(term);
-        });
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteAllTermData() {
-        databaseExecutor.execute(() -> {
-            mTermDAO.deleteAllTermData();
         });
         try {
             Thread.sleep(1000);
@@ -117,6 +115,9 @@ public class Repository {
         return mAllCourses;
     }
 
+    /**
+     * @param course Inserts a course class into the database.
+     */
     public void insertCourse(Course course) {
         databaseExecutor.execute(() -> {
             mCourseDAO.insertCourse(course);
@@ -128,6 +129,9 @@ public class Repository {
         }
     }
 
+    /**
+     * @param course Updates an existing course in the database.
+     */
     public void updateCourse(Course course) {
         databaseExecutor.execute(() -> {
             mCourseDAO.updateCourse(course);
@@ -139,6 +143,9 @@ public class Repository {
         }
     }
 
+    /**
+     * @param course Deletes a course in the database.
+     */
     public void deleteCourse(Course course) {
         databaseExecutor.execute(() -> {
             mCourseDAO.deleteCourse(course);
@@ -149,17 +156,6 @@ public class Repository {
             e.printStackTrace();
         }
     }
-
-//    public void deleteAllCourseData() {
-//        databaseExecutor.execute(() -> {
-//            mCourseDAO.deleteAllCourseData();
-//        });
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     /**
      * Return all Assessments to the database
@@ -179,6 +175,9 @@ public class Repository {
         return mAllAssessments;
     }
 
+    /**
+     * @param assessment Inserts a assessment class into the database.
+     */
     public void insertAssessment(Assessment assessment) {
         databaseExecutor.execute(() -> {
             mAssessmentDAO.insertAssessment(assessment);
@@ -190,6 +189,9 @@ public class Repository {
         }
     }
 
+    /**
+     * @param assessment Updates an existing assessment in the database.
+     */
     public void updateAssessment(Assessment assessment) {
         databaseExecutor.execute(() -> {
             mAssessmentDAO.updateAssessment(assessment);
@@ -201,20 +203,12 @@ public class Repository {
         }
     }
 
+    /**
+     * @param assessment Deletes an assessment in the database.
+     */
     public void deleteAssessment(Assessment assessment) {
         databaseExecutor.execute(() -> {
             mAssessmentDAO.deleteAssessment(assessment);
-        });
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteAllAssessmentData() {
-        databaseExecutor.execute(() -> {
-            mAssessmentDAO.deleteAllAssessmentData();
         });
         try {
             Thread.sleep(1000);
@@ -241,6 +235,9 @@ public class Repository {
         return mAllInstructors;
     }
 
+    /**
+     * @param instructor Inserts an instructor class into the database.
+     */
     public void insertInstructor(Instructor instructor) {
         databaseExecutor.execute(() -> {
             mInstructorDAO.insertInstructor(instructor);
@@ -252,6 +249,9 @@ public class Repository {
         }
     }
 
+    /**
+     * @param instructor Updates an existing instructor in the database.
+     */
     public void updateInstructor(Instructor instructor) {
         databaseExecutor.execute(() -> {
             mInstructorDAO.updateInstructor(instructor);
@@ -263,20 +263,12 @@ public class Repository {
         }
     }
 
+    /**
+     * @param instructor Deletes an instructor in the database.
+     */
     public void deleteInstructor(Instructor instructor) {
         databaseExecutor.execute(() ->
                 mInstructorDAO.deleteInstructor(instructor)
-        );
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteAllInstructorData() {
-        databaseExecutor.execute(() ->
-                mInstructorDAO.deleteAllInstructorData()
         );
         try {
             Thread.sleep(1000);

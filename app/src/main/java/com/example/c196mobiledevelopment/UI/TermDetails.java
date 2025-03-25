@@ -53,7 +53,10 @@ public class TermDetails extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener endDatePicker;
     final Calendar myCalendarStart = Calendar.getInstance();
 
-
+    /**
+     * Displays the Course Details activity with the appropriate xml tags.
+     * Allows user input to construct, edit, or delete an instructor.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +90,6 @@ public class TermDetails extends AppCompatActivity {
         editEndDate.setText(endDate);
 
 
-
         // Date Picker
         String myFormat = "MM/dd/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -118,7 +120,7 @@ public class TermDetails extends AppCompatActivity {
                 Date date;
                 // get value from other screen, but i'm going to hardcode it
                 String info = editStartDate.getText().toString();
-                if(info.isEmpty()) info="01/01/25";
+                if (info.isEmpty()) info = "01/01/25";
                 try {
                     myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
                 } catch (ParseException e) {
@@ -135,7 +137,7 @@ public class TermDetails extends AppCompatActivity {
                 Date date;
                 // get value from other screen, but i'm going to hardcode it
                 String info = editEndDate.getText().toString();
-                if(info.isEmpty()) info="01/01/25";
+                if (info.isEmpty()) info = "01/01/25";
                 try {
                     myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
                 } catch (ParseException e) {
@@ -162,12 +164,19 @@ public class TermDetails extends AppCompatActivity {
         courseAdapter.setCourses(filteredCourses);
     }
 
+    /**
+     * Sets the Textview of the course start date to display the appropriate date format.
+     */
     public void updateLabelStart() {
         String myFormat = "MM/dd/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         editStartDate.setText(sdf.format(myCalendarStart.getTime()));
     }
+
+    /**
+     * Sets the Textview of the course end date to display the appropriate date format.
+     */
     public void updateLabelEnd() {
         String myFormat = "MM/dd/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -175,11 +184,23 @@ public class TermDetails extends AppCompatActivity {
         editEndDate.setText(sdf.format(myCalendarStart.getTime()));
     }
 
+    /**
+     * Creates and inflates the menu items from the menu_termsdetails xml.
+     */
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_termdetails, menu);
         return true;
     }
 
+    /**
+     * @param item the selected menu item the user clicked on.
+     *             If the user clicked on the back menu item, it will return the user to the previous activity.
+     *             If the user clicked on the Save menu item, it will grab all the currently displayed user inputs and create a new term class or updates
+     *             an existing term class to the database.
+     *             If the user clicked on the Notify menu item, it will grab the currently displayed date of the term and will give the user a notification on when
+     *             the term starts.
+     *             If the user clicked on the Delete menu item, it will delete the currently displayed term class from the database.
+     */
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             this.finish();
@@ -191,15 +212,19 @@ public class TermDetails extends AppCompatActivity {
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             try {
                 // Validation Check
-                if (editTitle.getText().length() < 1) {Toast.makeText(TermDetails.this, "Missing Title", Toast.LENGTH_LONG).show();}
-                else if (editStartDate.getText().length() < 1){Toast.makeText(TermDetails.this, "Missing Start date", Toast.LENGTH_LONG).show();}
-                else if (editEndDate.getText().length() < 1){Toast.makeText(TermDetails.this, "Missing End date", Toast.LENGTH_LONG).show();}
-                else {
+                if (editTitle.getText().length() < 1) {
+                    Toast.makeText(TermDetails.this, "Missing Title", Toast.LENGTH_LONG).show();
+                } else if (editStartDate.getText().length() < 1) {
+                    Toast.makeText(TermDetails.this, "Missing Start date", Toast.LENGTH_LONG).show();
+                } else if (editEndDate.getText().length() < 1) {
+                    Toast.makeText(TermDetails.this, "Missing End date", Toast.LENGTH_LONG).show();
+                } else {
                     Date start = sdf.parse(editStartDate.getText().toString());
                     Date end = sdf.parse(editEndDate.getText().toString());
                     assert start != null;
-                    if (start.after(end)) {Toast.makeText(TermDetails.this, "Start Date cannot be after end date", Toast.LENGTH_LONG).show();}
-                    else {
+                    if (start.after(end)) {
+                        Toast.makeText(TermDetails.this, "Start Date cannot be after end date", Toast.LENGTH_LONG).show();
+                    } else {
                         Term term;
                         if (termId == -1) {
                             try {
@@ -209,8 +234,7 @@ public class TermDetails extends AppCompatActivity {
                                     repository.insertTerm(term);
                                     Toast.makeText(TermDetails.this, term.getTitle() + " term was added", Toast.LENGTH_LONG).show();
                                     this.finish();
-                                }
-                                else {
+                                } else {
                                     termId = repository.getmAllTerms().get(repository.getmAllTerms().size() - 1).getTermId() + 1;
                                     term = new Term(termId, editTitle.getText().toString(), editStartDate.getText().toString(), editEndDate.getText().toString());
                                     repository.insertTerm(term);
@@ -238,7 +262,7 @@ public class TermDetails extends AppCompatActivity {
         if (item.getItemId() == R.id.termDelete) {
             try {
                 for (Term t : repository.getmAllTerms()) {
-                    if(t.getTermId() == termId) currentTerm = t;
+                    if (t.getTermId() == termId) currentTerm = t;
                 }
                 numCourses = 0;
                 for (Course c : repository.getmAllCourses()) {
@@ -271,7 +295,7 @@ public class TermDetails extends AppCompatActivity {
                 //Receiver
                 Long trigger = myDate.getTime();
                 Intent intent = new Intent(TermDetails.this, MyReceiver.class);
-                intent.putExtra("key",  editTitle.getText().toString() + " term is starting");
+                intent.putExtra("key", editTitle.getText().toString() + " term is starting");
                 PendingIntent sender = PendingIntent.getBroadcast(TermDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
                 AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
@@ -283,6 +307,9 @@ public class TermDetails extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Redisplay the RecyclerViewers with the appropriate data when.
+     */
     protected void onResume() {
         try {
             super.onResume();

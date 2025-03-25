@@ -15,6 +15,9 @@ import com.example.c196mobiledevelopment.R;
 public class MainActivity extends AppCompatActivity {
     public static int numAlert;
 
+    /**
+     * Main activity of the program. Displays a list of buttons for the user to click on.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -48,6 +48,10 @@ public class AssessmentDetails extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener datePicker;
     final Calendar myCalendarStart = Calendar.getInstance();
 
+    /**
+     * Displays the Course Details activity with the appropriate xml tags.
+     * Allows user input to construct, edit, or delete an assessment.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +98,7 @@ public class AssessmentDetails extends AppCompatActivity {
                 Date date;
                 // get value from other screen, but i'm going to hardcode it
                 String info = assessmentDate.getText().toString();
-                if(info.isEmpty()) info="01/01/25";
+                if (info.isEmpty()) info = "01/01/25";
                 try {
                     myCalendarStart.setTime(Objects.requireNonNull(sdf.parse(info)));
                 } catch (ParseException e) {
@@ -118,12 +122,19 @@ public class AssessmentDetails extends AppCompatActivity {
 
     }
 
+    /**
+     * Sets the Textview of the assessment date to display the appropriate date format.
+     */
     public void updateLabel() {
         String myFormat = "MM/dd/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         assessmentDate.setText(sdf.format(myCalendarStart.getTime()));
     }
+
+    /**
+     * @return Gets the current position of the array item on the assessment status spinner.
+     */
     private int getIndex(Spinner spinner, String courseStatus) {
 
         int index = 0;
@@ -136,11 +147,23 @@ public class AssessmentDetails extends AppCompatActivity {
         return index;
     }
 
+    /**
+     * Creates and inflates the menu items from the menu_assessmentdetails xml.
+     */
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_assessmentdetails, menu);
         return true;
     }
 
+    /**
+     * @param item the selected menu item the user clicked on.
+     *             If the user clicked on the back menu item, it will return the user to the previous activity.
+     *             If the user clicked on the Save menu item, it will grab all the currently displayed user inputs and create a new assessment class or updates
+     *             an existing assessment class to the database.
+     *             If the user clicked on the Notify menu item, it will grab the currently displayed date of the assessment and will give the user a notification on when
+     *             the assessment starts.
+     *             If the user clicked on the Delete menu item, it will delete the currently displayed assessment class from the database.
+     */
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             this.finish();
@@ -148,13 +171,15 @@ public class AssessmentDetails extends AppCompatActivity {
         }
         // Save details of the assessment and make it
         if (item.getItemId() == R.id.assessmentSave) {
-            if(courseId == -1) {
+            if (courseId == -1) {
                 Toast.makeText(AssessmentDetails.this, "Please make a course first", Toast.LENGTH_LONG).show();
             } else {
                 // Validation Check
-                if(assessmentTitle.getText().length() < 1) {Toast.makeText(AssessmentDetails.this, "Missing Title", Toast.LENGTH_LONG).show();}
-                else if(assessmentDate.getText().length() < 1) {Toast.makeText(AssessmentDetails.this, "Missing Date", Toast.LENGTH_LONG).show();}
-                else {
+                if (assessmentTitle.getText().length() < 1) {
+                    Toast.makeText(AssessmentDetails.this, "Missing Title", Toast.LENGTH_LONG).show();
+                } else if (assessmentDate.getText().length() < 1) {
+                    Toast.makeText(AssessmentDetails.this, "Missing Date", Toast.LENGTH_LONG).show();
+                } else {
                     Assessment assessment;
                     Spinner spinner = findViewById(R.id.assessmentTypeSpinner);
                     assessmentType = spinner.getSelectedItem().toString();
@@ -162,13 +187,14 @@ public class AssessmentDetails extends AppCompatActivity {
                         try {
                             if (repository.getmAllAssessments().isEmpty()) {
                                 assessmentId = 1;
-                                assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentDate.getText().toString(), assessmentType,courseId);
+                                assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentDate.getText().toString(), assessmentType, courseId);
                                 repository.insertAssessment(assessment);
                                 Toast.makeText(AssessmentDetails.this, assessmentTitle.getText().toString() + " was added to Assessment List", Toast.LENGTH_LONG).show();
                                 this.finish();
                             } else {
                                 assessmentId = repository.getmAllAssessments().get(repository.getmAllAssessments().size() - 1).getAssessmentId() + 1;
-                                assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentDate.getText().toString(), assessmentType,courseId);                            repository.insertAssessment(assessment);
+                                assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentDate.getText().toString(), assessmentType, courseId);
+                                repository.insertAssessment(assessment);
                                 Toast.makeText(AssessmentDetails.this, assessmentTitle.getText().toString() + " was added to Assessment List", Toast.LENGTH_LONG).show();
                                 this.finish();
                             }
@@ -177,7 +203,7 @@ public class AssessmentDetails extends AppCompatActivity {
                         }
                         return true;
                     } else {
-                        assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentDate.getText().toString(), assessmentType,courseId);
+                        assessment = new Assessment(assessmentId, assessmentTitle.getText().toString(), assessmentDate.getText().toString(), assessmentType, courseId);
                         repository.updateAssessment(assessment);
                         Toast.makeText(AssessmentDetails.this, assessmentTitle.getText().toString() + " was updated", Toast.LENGTH_LONG).show();
                         this.finish();
@@ -202,7 +228,7 @@ public class AssessmentDetails extends AppCompatActivity {
                 //Receiver
                 Long trigger = myDate.getTime();
                 Intent intent = new Intent(AssessmentDetails.this, MyReceiver.class);
-                intent.putExtra("key",  assessmentTitle.getText().toString() + " assessment is today!");
+                intent.putExtra("key", assessmentTitle.getText().toString() + " assessment is today!");
                 PendingIntent sender = PendingIntent.getBroadcast(AssessmentDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
                 AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
@@ -213,9 +239,9 @@ public class AssessmentDetails extends AppCompatActivity {
         }
 
         // Delete Assessment
-        if(item.getItemId() == R.id.assessmentDelete) {
+        if (item.getItemId() == R.id.assessmentDelete) {
             for (Assessment a : repository.getmAllAssessments()) {
-                if(a.getAssessmentId() == assessmentId) {
+                if (a.getAssessmentId() == assessmentId) {
                     repository.deleteAssessment(a);
                     Toast.makeText(AssessmentDetails.this, a.getTitle() + " was deleted", Toast.LENGTH_LONG).show();
                     this.finish();

@@ -21,6 +21,11 @@ import java.util.List;
 public class TermList extends AppCompatActivity {
     private Repository repository;
 
+    /**
+     * Displays the Course List activity with the appropriate xml tags.
+     * Populates the course RecyclerView with all the course from the database.
+     * When the add floating action button is clicked, it will lead the user to the terms list to selected a term to add a course to.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +57,9 @@ public class TermList extends AppCompatActivity {
         }
     }
 
+    /**
+     * Redisplay the Term RecyclerViewer with the appropriate data when.
+     */
     @Override
     protected void onResume() {
         try {

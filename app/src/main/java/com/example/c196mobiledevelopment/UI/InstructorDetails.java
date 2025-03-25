@@ -29,8 +29,10 @@ public class InstructorDetails extends AppCompatActivity {
     String email;
     String phone;
 
-
-
+    /**
+     * Displays the Course Details activity with the appropriate xml tags.
+     * Allows user input to construct, edit, or delete an instructor.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,35 +59,49 @@ public class InstructorDetails extends AppCompatActivity {
         instructorPhone.setText(phone);
 
     }
+
+    /**
+     * Creates and inflates the menu items from the menu_instructordetails xml.
+     */
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_instructordetails, menu);
         return true;
     }
 
+    /**
+     * @param item the selected menu item the user clicked on.
+     *             If the user clicked on the back menu item, it will return the user to the previous activity.
+     *             If the user clicked on the Save menu item, it will grab all the currently displayed user inputs and create a new instructor class or updates
+     *             an existing instructor class to the database.
+     *             If the user clicked on the Delete menu item, it will delete the currently displayed instructor class from the database.
+     */
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             return true;
         }
 
         // Save Instructor
-        if(item.getItemId() == R.id.instructorSave) {
+        if (item.getItemId() == R.id.instructorSave) {
             // Validation Check
-            if(instructorName.getText().length() < 1) {Toast.makeText(InstructorDetails.this, "Missing Name", Toast.LENGTH_LONG).show();}
-            else if(instructorEmail.getText().length() < 1) {Toast.makeText(InstructorDetails.this, "Missing Email", Toast.LENGTH_LONG).show();}
-            else if(instructorPhone.getText().length() < 1) {Toast.makeText(InstructorDetails.this, "Missing Phone Number", Toast.LENGTH_LONG).show();}
-            else {
+            if (instructorName.getText().length() < 1) {
+                Toast.makeText(InstructorDetails.this, "Missing Name", Toast.LENGTH_LONG).show();
+            } else if (instructorEmail.getText().length() < 1) {
+                Toast.makeText(InstructorDetails.this, "Missing Email", Toast.LENGTH_LONG).show();
+            } else if (instructorPhone.getText().length() < 1) {
+                Toast.makeText(InstructorDetails.this, "Missing Phone Number", Toast.LENGTH_LONG).show();
+            } else {
                 Instructor instructor;
                 Log.d("instructor", "Instructor id when editing an instructor is: " + instructorId);
                 if (instructorId == -1) {
                     try {
                         if (repository.getmAllInstructors().isEmpty()) {
                             instructorId = 1;
-                            instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
+                            instructor = new Instructor(instructorId, instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
                             repository.insertInstructor(instructor);
                             this.finish();
                         } else {
                             instructorId = repository.getmAllInstructors().get(repository.getmAllInstructors().size() - 1).getInstructorId() + 1;
-                            instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
+                            instructor = new Instructor(instructorId, instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
                             repository.insertInstructor(instructor);
                             Toast.makeText(InstructorDetails.this, instructor.getName() + " was added", Toast.LENGTH_LONG).show();
                             this.finish();
@@ -94,7 +110,7 @@ public class InstructorDetails extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    instructor = new Instructor(instructorId,instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
+                    instructor = new Instructor(instructorId, instructorName.getText().toString(), instructorEmail.getText().toString(), instructorPhone.getText().toString());
                     repository.updateInstructor(instructor);
                     Toast.makeText(InstructorDetails.this, instructor.getName() + " was updated", Toast.LENGTH_LONG).show();
                     this.finish();
@@ -104,7 +120,7 @@ public class InstructorDetails extends AppCompatActivity {
         }
 
         // Delete Instructor
-        if(item.getItemId() == R.id.instructorDelete) {
+        if (item.getItemId() == R.id.instructorDelete) {
             for (Instructor instructor : repository.getmAllInstructors()) {
                 if (instructor.getInstructorId() == instructorId) {
                     repository.deleteInstructor(instructor);
