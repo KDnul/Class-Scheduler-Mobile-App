@@ -60,7 +60,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     //Room components
-    implementation("androidx.room:room-runtime:$rootProject.roomVersion")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-    androidTestImplementation("androidx.room:room-testing:$rootProject.roomVersion")
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    androidTestImplementation(libs.androidx.room.testing)
 }

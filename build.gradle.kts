@@ -4,7 +4,3 @@ plugins {
     alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.kotlinCompose) apply false
 }
-
-ext {
-    val room_version = "2.6.1"
-}
