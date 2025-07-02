@@ -1,1 +1,1 @@
-# C196Mobile
+# Class Scheduler Mobile App
